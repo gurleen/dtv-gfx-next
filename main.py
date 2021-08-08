@@ -5,7 +5,7 @@ from asyncio import Queue
 from aiohttp import web
 import socketio
 
-from producers.randint import producer, producer_two
+from producers.ftpserver import run_ftp_server
 from producers.serial import mock_allsport_cg
 from producers.config import read_from_config
 
@@ -56,6 +56,7 @@ def main():
     loop.create_task(consumer(q))
     loop.create_task(read_from_config(q))
     loop.create_task(mock_allsport_cg(q))
+    # loop.create_task(run_ftp_server(q))
 
     try:
         logging.info("Running graphics server...")
