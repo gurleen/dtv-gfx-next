@@ -36,4 +36,4 @@ socket.on("data-update", (payload) => {
     }
 });
 
-// socket.emit("get-cache");
+socket.emit("get-cache");
