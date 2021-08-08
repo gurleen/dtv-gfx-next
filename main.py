@@ -6,7 +6,7 @@ from aiohttp import web
 import socketio
 
 from producers.randint import producer, producer_two
-from producers.serial import read_allsport_cg
+from producers.serial import mock_allsport_cg
 from producers.config import read_from_config
 
 
@@ -53,15 +53,9 @@ def main():
     site = web.TCPSite(runner)
     loop.run_until_complete(site.start())
 
-    loop.create_task(producer(q))
-    loop.create_task(producer_two(q))
     loop.create_task(consumer(q))
     loop.create_task(read_from_config(q))
-    try:
-        coro = read_allsport_cg(q, loop)
-        loop.run_until_complete(coro)
-    except Exception:
-        logging.error("Failed to mount AllSport CG.")
+    loop.create_task(mock_allsport_cg(q))
 
     try:
         logging.info("Running graphics server...")

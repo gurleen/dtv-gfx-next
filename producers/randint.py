@@ -5,7 +5,7 @@ import random
 async def producer(q: asyncio.Queue):
     while True:
         await q.put(("homeScore", random.randint(0, 49)))
-        await asyncio.sleep(2)
+        await asyncio.sleep(4)
 
 
 async def producer_two(q: asyncio.Queue):
