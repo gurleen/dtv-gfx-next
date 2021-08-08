@@ -1,2 +1,4 @@
 aiohttp==3.7.4.post0
 python-socketio==5.4.0
+pyserial-asyncio==0.5
+aiofiles==0.7.0
