@@ -1,0 +1,165 @@
+.root {
+    height: 720px;
+    width: 1280px;
+    color: transparent;
+}
+
+.container {
+    position: relative;
+    top: 85%;
+    left: 200px;
+    height: 55px;
+    width: 800px;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.teamArea {
+    height: 40px;
+    width: 210px;
+}
+
+.teamName {
+    color: white;
+    font-size: 18px;
+    font-family: "Open Sans";
+    font-weight: bolder;
+    position: relative;
+    left: 30px;
+    top: 20%;
+}
+
+.scoreArea {
+    height: 40px;
+    width: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.score {
+    color: white;
+    font-size: 30px;
+    font-family: "Open Sans";
+    font-weight: bold;
+}
+
+.infoArea {
+    width: 185px;
+    height: 40px;
+    background-color: #131313;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    font-size: 20px;
+    font-family: "Open Sans";
+    font-weight: 600;
+}
+
+#clock {
+    color: yellow;
+}
+
+.shotClockArea {
+    height: 40px;
+    width: 55px;
+    background-color: black;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 20px;
+    font-family: "Open Sans";
+    font-weight: bold;
+}
+
+#shotClock {
+    color: white;
+}
+
+.timeouts {
+    width: 160px;
+    padding-left: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.singleTimeout {
+    width: 35px;
+    height: 5px;
+    background-color: white;
+}
+
+.spacer {
+    width: 115px;
+}
+
+.slider {
+    left: 208px;
+    width: 800px;
+    height: 36px;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    position: absolute;
+    z-index: -1;
+    top: 585px;
+}
+
+.sliderTitleBox {
+    width: 153px;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-family: "Open Sans";
+    font-weight: bold;
+    color: white;
+}
+
+.sliderTitleBoxAlt {
+    width: 153px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-family: "Open Sans";
+    font-weight: bold;
+    color: white;
+}
+
+#slider3Anim2,
+#slider4Anim2 {
+    justify-content: space-around;
+}
+
+.numPosBox {
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid grey;
+}
+
+.sliderContentArea {
+    width: 647px;
+    height: 100%;
+    position: relative;
+    left: 15px;
+    top: 15%;
+    font-size: 18px;
+    font-family: "Open Sans";
+    font-weight: 600;
+    color: white;
+}
+
+.comparisonStat {
+    font-weight: lighter;
+}
+
+.lthImg {
+    position: relative;
+    height: 95%;
+    width: auto;
+}

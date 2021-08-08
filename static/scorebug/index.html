@@ -1,0 +1,62 @@
+<html>
+
+<head>
+  <title>DTV Graphics Next</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"
+    integrity="sha512-UxP+UhJaGRWuMG2YC6LPWYpFQnsSgnor0VUF3BHdD83PS/pOpN+FYbZmrYN+ISX8jnvgVUciqP/fILOXDjZSwg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+    integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+    crossorigin="anonymous"></script>
+  <script src="../components/livetext.js"></script>
+</head>
+
+<body class="root">
+  <div id="scorebug" class="container anim1">
+    <div class="teamArea anim2" id="homeArea" style="background-color: rgb(0, 67, 123);">
+      <live-text key="homeName" class="teamName" id="homeName">
+        homeName
+      </live-text>
+    </div>
+    <div class="scoreArea anim2" id="homeScoreArea" style="background-color: rgb(0, 50, 92);">
+      <live-text key="homeScore" fade="true" class="score" id="homeScore">0</live-text>
+    </div>
+    <div class="teamArea anim2" id="awayArea" style="background-color: rgb(128, 0, 0);">
+      <live-text key="awayName" class="teamName" id="awayName">
+        awayName
+      </live-text>
+    </div>
+    <div class="scoreArea anim2" id="awayScoreArea" style="background-color: rgb(87, 0, 0);">
+      <live-text key="awayScore" class="score" id="awayScore">0</live-text>
+    </div>
+    <div class="infoArea anim2">
+      <live-text key="period" id="period">1st</live-text>
+      <live-text key="clock" id="clock">12:00</live-text>
+    </div>
+    <div class="shotClockArea anim2">
+      <live-text key="shotClock" id="shotClock">30</live-text>
+    </div>
+
+    <div class="timeouts">
+      <div class="singleTimeout" id="homeTO1"></div>
+      <div class="singleTimeout" id="homeTO2"></div>
+      <div class="singleTimeout" id="homeTO3"></div>
+      <div class="singleTimeout" id="homeTO4"></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="timeouts">
+      <div class="singleTimeout" id="awayTO1"></div>
+      <div class="singleTimeout" id="awayTO2"></div>
+      <div class="singleTimeout" id="awayTO3"></div>
+      <div class="singleTimeout" id="awayTO4"></div>
+    </div>
+
+  </div>
+</body>
+
+</html>
