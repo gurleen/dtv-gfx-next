@@ -27,6 +27,13 @@ async def consumer(q: Queue):
 async def get_cache(sid):
     await sio.emit("data-update", cache)
 
+
+@sio.event
+def connect(sid, environ, _):
+    ip = environ.get("REMOTE_ADDR")
+    print(f"Client at {ip} with sid {sid} connected.")
+
+
 def main():
     q = Queue()
     loop = asyncio.get_event_loop()
@@ -40,6 +47,11 @@ def main():
     loop.create_task(producer_two(q))
     loop.create_task(consumer(q))
 
-    loop.run_forever()
+    try:
+        print("Running graphics server...")
+        loop.run_forever()
+    except KeyboardInterrupt:
+        print("Goodbye!")
+        quit()
 
 main()
