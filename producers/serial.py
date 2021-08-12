@@ -4,9 +4,13 @@ import itertools
 from typing import Optional
 
 import serial_asyncio
+from loguru import logger
 
 
 class Output(asyncio.Protocol):
+    line = b""
+    cache = {}
+
     def __init__(self, q: asyncio.Queue) -> None:
         super().__init__()
         self.queue = q
@@ -14,21 +18,40 @@ class Output(asyncio.Protocol):
     def connection_made(self, transport: asyncio.transports.BaseTransport) -> None:
         self.transport = transport
         transport.serial.rts = False
+        logger.info("Connected to AllSport CG.")
 
-    async def data_received(self, data: bytes) -> None:
-        await q.put(repr(bytes))
+    def data_received(self, data) -> None:
+        if b'\x04' in data:
+            asyncio.ensure_future(self.flush_data(), loop=asyncio.get_event_loop())
+        else:
+            self.line += data
+
+    async def flush_data(self) -> None:
+        line = self.line.decode("ascii").lstrip("\x01")
+        rv = {
+            "clock": line[0:5].strip(),
+            "shotClock": line[8:11].strip(),
+            "homeScore": line[13:15].strip(),
+            "awayScore": line[16:18].strip()
+        }
+        for k, v in rv.items():
+            if self.cache.get(k) != v:
+                await self.queue.put((k, v))
+                self.cache[k] = v
+        self.line = b""
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
-        print("Connection to serialport lost!")
+        logger.error("Connection to serial port lost!")
 
 
 def read_allsport_cg(q: asyncio.Queue, loop: asyncio.AbstractEventLoop):
     return serial_asyncio.create_serial_connection(
-        loop, lambda: Output(q), "/dev/ttyUSB0", baudrate=115200
+        loop, lambda: Output(q), "/dev/ttyUSB0"
     )
 
 
 async def mock_allsport_cg(q: asyncio.Queue):
+    logger.info("Running MOCK AllSport CG.")
     periods = itertools.cycle(("1st", "2nd", "3rd", "4th"))
     home, away = 0, 0
     duration = 10
