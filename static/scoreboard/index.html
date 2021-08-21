@@ -1,0 +1,102 @@
+<html>
+
+<head>
+    <title>DTV Graphics Next</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"
+        integrity="sha512-UxP+UhJaGRWuMG2YC6LPWYpFQnsSgnor0VUF3BHdD83PS/pOpN+FYbZmrYN+ISX8jnvgVUciqP/fILOXDjZSwg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+        integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+        crossorigin="anonymous"></script>
+    <script src="../components/livetext.js"></script>
+    <script src="../components/box.js"></script>
+</head>
+
+<style>
+    body {
+        font-family: "Open Sans";
+        color: white;
+    }
+
+    img {
+        max-height: 85%;
+        max-width: 85%;
+    }
+
+    div {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<body style="display: flex; flex-direction: column; align-items: center; background-color: gray;">
+    <div id="sponsor" class="anim4">
+        <g-box height="26px" width="142px" color="#0193cf">
+            <img style="max-width: 100%; max-height: 100%;" src="ibx.png">
+        </g-box>
+    </div>
+
+    <div id="score">
+        <g-box class="anim1" height="34px" width="62px" opacity="65%" color="#1d1716" style="margin-left: -2px;">
+            <img
+                src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/Elon_Phoenix_logo.svg/1200px-Elon_Phoenix_logo.svg.png">
+        </g-box>
+
+        <g-box class="anim1" height="34px" width="112px" color="#74000b" align="center">
+            <live-text style="font-weight: 600; font-size: 1.5em;" key="awayName"></live-text>
+        </g-box>
+
+        <g-box class="anim1" height="34px" width="39px" color="#707171">
+            <live-text style="font-weight: 600; font-size: 1.5em;" key="awayScore" fade="true"></live-text>
+        </g-box>
+
+
+        <g-box class="anim3" height="34px" width="2px" color="16243e"></g-box>
+
+        <g-box class="anim2" height="34px" width="39px" color="#707171">
+            <live-text style="font-weight: 600; font-size: 1.5em;" key="homeScore" fade="true"></live-text>
+        </g-box>
+
+        <g-box class="anim2" height="34px" width="112px" color="#2b3179">
+            <live-text style="font-weight: 600; font-size: 1.5em;" key="homeName"></live-text>
+        </g-box>
+        <g-box class="anim2" class="logo" height="34px" width="62px" opacity="65%" color="#1d1716">
+            <img
+                src="https://upload.wikimedia.org/wikipedia/en/thumb/1/16/Drexel_Dragons_logo.svg/1200px-Drexel_Dragons_logo.svg.png">
+        </g-box>
+    </div>
+
+    <div id="info" style="display: flex; justify-content: center;">
+        <div>
+            <g-box class="anim5" height="26px" width="69px" color="#000">
+                <live-text fade="true" key="period"></live-text>
+            </g-box>
+        </div>
+        <div class="anim6">
+            <g-box height="26px" width="69px" color="#fff">
+                <live-text style="color: black;" key="clock"></live-text>
+            </g-box>
+        </div>
+    </div>
+</body>
+
+<script>
+    var tl = gsap.timeline({ paused: true, onComplete: function () { this.seek(0).pause(); console.log(this); } })
+    tl.from(".anim1", { duration: .5, scaleX: 0, transformOrigin: "right", ease: "power4.out", stagger: { each: 0.1, from: "end", ease: "power2.out" } }, "-=0.5")
+    tl.from(".anim2", { duration: .5, scaleX: 0, transformOrigin: "left", ease: "power4.out", stagger: { each: 0.1, from: "start", ease: "power2.out" } }, "-=0.7")
+    tl.from(".anim3", { duration: .5, opacity: 0, ease: "power4.out" }, "-=0.5")
+    tl.from(".anim4", { duration: .5, opacity: 0, y: "30px", ease: "power4.out" }, "-=0.3")
+    tl.from(".anim5", { duration: .5, scaleX: 0, transformOrigin: "right", ease: "power4.out" }, "-=0.7")
+    tl.from(".anim6", { duration: .5, scaleX: 0, transformOrigin: "left", ease: "power4.out" }, "-=0.7")
+    tl.addPause(1.2)
+    tl.to("body", { duration: .15, opacity: 0 })
+
+    socket.on("state-update", (payload) => {
+        console.log(payload)
+        if ("scoreboard:toggle" in payload) { tl.play() }
+    })
+</script>
+
+</html>

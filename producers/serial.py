@@ -1,4 +1,5 @@
 import asyncio
+from kv_queue import KeyValueQueue
 import random
 import itertools
 from typing import Optional
@@ -11,7 +12,7 @@ class Output(asyncio.Protocol):
     line = b""
     cache = {}
 
-    def __init__(self, q: asyncio.Queue) -> None:
+    def __init__(self, q: KeyValueQueue) -> None:
         super().__init__()
         self.queue = q
 
@@ -36,7 +37,7 @@ class Output(asyncio.Protocol):
         }
         for k, v in rv.items():
             if self.cache.get(k) != v:
-                await self.queue.put((k, v))
+                await self.queue.data(k, v)
                 self.cache[k] = v
         self.line = b""
 
@@ -44,13 +45,13 @@ class Output(asyncio.Protocol):
         logger.error("Connection to serial port lost!")
 
 
-def read_allsport_cg(q: asyncio.Queue, loop: asyncio.AbstractEventLoop):
+def read_allsport_cg(q: KeyValueQueue, loop: asyncio.AbstractEventLoop):
     return serial_asyncio.create_serial_connection(
         loop, lambda: Output(q), "/dev/ttyUSB0"
     )
 
 
-async def mock_allsport_cg(q: asyncio.Queue):
+async def mock_allsport_cg(q: KeyValueQueue):
     logger.info("Running MOCK AllSport CG.")
     periods = itertools.cycle(("1st", "2nd", "3rd", "4th"))
     home, away = 0, 0
@@ -61,17 +62,17 @@ async def mock_allsport_cg(q: asyncio.Queue):
         shot_clock -= 1
         if duration <= 0: 
             duration = 10
-            await q.put(("period", next(periods)))
+            await q.data("period", next(periods))
         if shot_clock <= 0: shot_clock = 30
         min, sec = duration // 60, duration % 60
         time = f"{min}:{sec:02}"
-        await q.put(("clock", time))
-        await q.put(("shotClock", shot_clock))
+        await q.data("clock", time)
+        await q.data("shotClock", shot_clock)
         x = random.random()
         if x < 0.1:
             home += 2
-            await q.put(("homeScore", home))
+            await q.data("homeScore", home)
         elif x < 0.2:
             away += 2
-            await q.put(("awayScore", away))
+            await q.data("awayScore", away)
         await asyncio.sleep(1)

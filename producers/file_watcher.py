@@ -1,14 +1,13 @@
+from kv_queue import KeyValueQueue
 import time
 import asyncio
-import concurrent.futures
-import aiofiles
 from watchgod import awatch
 
 
 FILE_NAME = "/srv/ftp/test"
 
 
-async def watch_file(q: asyncio.Queue):
+async def watch_file(q: KeyValueQueue):
     loop = asyncio.get_event_loop()
     async for changes in awatch("/srv/ftp/test"):
         print(changes)

@@ -33,9 +33,13 @@ customElements.define('live-text', LiveText);
 const socket = io();
 socket.on("data-update", (payload) => {
     console.log(payload);
+    const hasDataStore = typeof dataStore !== 'undefined';
     for(const property in payload) {
         LiveText.update(property, payload[property]);
+        if(hasDataStore) {
+            dataStore.items[property] = payload[property];
+        }
     }
 });
 
-socket.emit("get-cache");
+socket.emit("get-data-cache");

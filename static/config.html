@@ -6,12 +6,23 @@
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ryangjchandler/spruce@2.x.x/dist/spruce.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.2/alpine.js" integrity="sha512-No22QdEJ4zlXvdQDpm6oeXcjwajpNxvnstx6NEU/5qZFysa5gsgj/bSfAFpSc9Za5LjbgQLRXyCeY53aWmk8ZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        const dataStore = window.Spruce.store('data', {
+            items: {}
+        })
+    </script>
     <script src="components/livetext.js"></script>
     <script src="components/liveinput.js"></script>
 </head>
 
-<body>
+<body x-data>
     <live-input key="homeName"></live-input>
+    <template x-for="item in Object.keys($store.data.items)" :key="item">
+        <live-input x-bind:key="item"></live-input>
+    </template>
+    </div>
 </body>
 
 </html>

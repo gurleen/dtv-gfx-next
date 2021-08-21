@@ -1,5 +1,6 @@
 import asyncio
-from asyncio import Queue
+from collections import defaultdict
+from typing import Dict
 
 from aiohttp import web
 import socketio
@@ -8,34 +9,35 @@ from loguru import logger
 from producers.file_watcher import watch_file
 from producers.serial import read_allsport_cg
 from producers.config import read_from_config
+from kv_queue import KeyValueQueue
 
 
 sio = socketio.AsyncServer()
 app = web.Application()
 sio.attach(app)
-q = Queue()
+q = KeyValueQueue()
 
 app.router.add_static("/", "static", show_index=True)
 
 
-cache = dict()
+cache = defaultdict(dict)
 
 
-async def consumer(q: Queue):
+async def consumer(q: KeyValueQueue):
     while True:
-        key, value = await q.get()
-        cache[key] = value
-        await sio.emit("data-update", {key: value})
+        key, value, msg_type = await q.get()
+        cache[msg_type][key] = value
+        await sio.emit(msg_type, {key: value})
 
 
-@sio.on("get-cache")
+@sio.on("get-data-cache")
 async def get_cache(sid):
-    await sio.emit("data-update", cache)
+    await sio.emit("data-update", cache["data-update"])
 
 
 @sio.on("set-key")
-async def set_key(sid, data):
-    await q.put((data["key"], data["value"]))
+async def set_key(sid, data: Dict):
+    await q.put((data["key"], data["value"], data["type"]))
 
 
 @sio.event
