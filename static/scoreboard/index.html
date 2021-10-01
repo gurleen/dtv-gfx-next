@@ -12,6 +12,7 @@
         crossorigin="anonymous"></script>
     <script src="../components/livetext.js"></script>
     <script src="../components/box.js"></script>
+    <script src="../components/image.js"></script>
 </head>
 
 <style>
@@ -20,7 +21,7 @@
         color: white;
     }
 
-    img {
+    img, live-image::part(img) {
         max-height: 85%;
         max-width: 85%;
     }
@@ -31,7 +32,7 @@
     }
 </style>
 
-<body style="display: flex; flex-direction: column; align-items: center; background-color: gray;">
+<body style="display: flex; flex-direction: column; align-items: center; background-color: transparent;">
     <div id="sponsor" class="anim4">
         <g-box height="26px" width="142px" color="#0193cf">
             <img style="max-width: 100%; max-height: 100%;" src="ibx.png">
@@ -39,12 +40,11 @@
     </div>
 
     <div id="score">
-        <g-box class="anim1" height="34px" width="62px" opacity="65%" color="#1d1716" style="margin-left: -2px;">
-            <img
-                src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/Elon_Phoenix_logo.svg/1200px-Elon_Phoenix_logo.svg.png">
+        <g-box class="anim1" height="34px" width="62px" opacity="65%" color="#1d1716" align="center">
+            <live-image key="awayImage" style="display: flex; align-items: center;">
         </g-box>
 
-        <g-box class="anim1" height="34px" width="112px" color="#74000b" align="center">
+        <g-box class="anim1" height="34px" width="112px" color="#653600" dcolor="awayColor" align="center">
             <live-text style="font-weight: 600; font-size: 1.5em;" key="awayName"></live-text>
         </g-box>
 

@@ -1,3 +1,7 @@
 homeName=DREXEL
-awayName=ELON
+homeNameLower=Drexel
+homeRecord=(4-2)
+awayName=LA SALLE
+awayNameLower=La Salle
+awayRecord=(2-4)
 period=1st

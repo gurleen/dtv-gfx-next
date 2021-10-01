@@ -32,8 +32,10 @@ class Output(asyncio.Protocol):
         rv = {
             "clock": line[0:5].strip(),
             "shotClock": line[8:11].strip(),
-            "homeScore": line[13:15].strip(),
-            "awayScore": line[16:18].strip()
+            # "homeScore": line[13:15].strip(),
+            "homeScore": line[25:27].strip(),
+            "awayScore": line[27:29].strip()
+            # "awayScore": line[16:18].strip()
         }
         for k, v in rv.items():
             if self.cache.get(k) != v:
@@ -45,9 +47,9 @@ class Output(asyncio.Protocol):
         logger.error("Connection to serial port lost!")
 
 
-def read_allsport_cg(q: KeyValueQueue, loop: asyncio.AbstractEventLoop):
+def read_allsport_cg(q: KeyValueQueue, loop: asyncio.AbstractEventLoop, port: str = "/dev/tty.usbserial-14340"):
     return serial_asyncio.create_serial_connection(
-        loop, lambda: Output(q), "/dev/ttyUSB0"
+        loop, lambda: Output(q), port
     )
 
 

@@ -1,6 +1,6 @@
-class LiveText extends HTMLElement {
-    static liveTextObjects = {};
+const liveTextObjects = {};
 
+class LiveText extends HTMLElement {
     constructor() {
         super();
     }
@@ -8,15 +8,15 @@ class LiveText extends HTMLElement {
     connectedCallback() {
         let key = this.getAttribute("key");
         this.willFade = this.getAttribute("fade") === "true";
-        LiveText.liveTextObjects[key] = this;
+        liveTextObjects[key] = this;
         if(this.willFade) {
             this.tween = gsap.to(this, {opacity: 0, duration: 0.1});
         }
     }
 
     static update(key, value) {
-        if(!(key in this.liveTextObjects)) { return; }
-        let element = this.liveTextObjects[key];
+        if(!(key in liveTextObjects)) { return; }
+        let element = liveTextObjects[key];
         if(element.willFade) {
             element.tween.play().then(() => {
                 element.innerText = value;
@@ -28,6 +28,7 @@ class LiveText extends HTMLElement {
     }
 }
 
+const dataStore = {};
 customElements.define('live-text', LiveText);
 
 const socket = io();
@@ -37,9 +38,17 @@ socket.on("data-update", (payload) => {
     for(const property in payload) {
         LiveText.update(property, payload[property]);
         if(hasDataStore) {
-            dataStore.items[property] = payload[property];
+            dataStore[property] = payload[property];
         }
     }
 });
+
+function getFromSocket(key) {
+    return new Promise(resolve => {
+        socket.emit("get-key", key, (response) => {
+            resolve(response)
+        });
+    });
+}
 
 socket.emit("get-data-cache");

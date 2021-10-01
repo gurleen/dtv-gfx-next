@@ -8,14 +8,18 @@ class GBox extends HTMLElement {
         this.shadowRoot.append(wrapper);
     }
 
-    connectedCallback() {
-        const c = hexToRgb(this.getAttribute("color"));
+    async connectedCallback() {
+        let color;
+        const dc = this.getAttribute("dcolor");
+        if(dc) { color = await getFromSocket(dc); }
+        let c = hexToRgb(color || this.getAttribute("color") || "#000");
+        console.log(c);
         const a = this.getAttribute("opacity") || "1"
-        const rgba = `rgba(${c.r}, ${c.g}, ${c.b}, ${a})`;
+        const rgba = this.hasAttribute("color")? `background-color: rgba(${c.r}, ${c.g}, ${c.b}, ${a});` : "";
         const style = `
         height: ${this.getAttribute("height")};
         width: ${this.getAttribute("width")};
-        background-color: ${rgba};
+        ${rgba}
         display: flex;
         justify-content: ${this.getAttribute("justify") || "center"};
         align-items: ${this.getAttribute("align") || "center"}

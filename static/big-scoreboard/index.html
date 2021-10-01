@@ -1,0 +1,88 @@
+<html>
+
+<head>
+    <title>DTV Graphics Next</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"
+        integrity="sha512-UxP+UhJaGRWuMG2YC6LPWYpFQnsSgnor0VUF3BHdD83PS/pOpN+FYbZmrYN+ISX8jnvgVUciqP/fILOXDjZSwg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+        integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+        crossorigin="anonymous"></script>
+    <script src="../components/livetext.js"></script>
+    <script src="../components/box.js"></script>
+</head>
+
+<style>
+    body {
+        font-family: "Open Sans";
+        font-weight: 600;
+        color: white;
+    }
+
+    img {
+        max-height: 85%;
+        max-width: 85%;
+    }
+
+    div {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<body style="display: flex; flex-direction: column; align-items: center; background-color: transparent;">
+    <div class="stats">
+        <g-box width="218px" height="0px"></g-box>
+        <g-box width="218px" height="0px"></g-box>
+        <g-box width="125px" height="21px" style="background-image: linear-gradient(180deg, #2d2d2d 0%, #000000 100%);">
+            <live-text key="period"></live-text>
+        </g-box>
+    </div>
+    <div class="homeTeam">
+        <g-box height="57px" width="436px" justify="start"
+            style="background-image: linear-gradient(180deg, #2b3179 0%, #1b1f53 100%);">
+            <img class="teamId" style="padding-left: 27px;"
+                src="https://upload.wikimedia.org/wikipedia/en/thumb/1/16/Drexel_Dragons_logo.svg/1200px-Drexel_Dragons_logo.svg.png">
+            <live-text class="teamId" key="homeNameLower" style="font-weight: 600; font-size: 41px; padding-left: 32px;"></live-text>
+        </g-box>
+        <g-box height="57px" width="124px" style="background-image: linear-gradient(180deg, #3a43a7 0%, #242a6d 100%);">
+            <live-text key="homeScore" style="font-size: 45px;"></live-text>
+        </g-box>
+    </div>
+    <div class="awayTeam">
+        <g-box height="57px" width="436px" justify="start"
+            style="background-image: linear-gradient(180deg, #73000b 0%, #510007 100%);">
+            <img class="teamId" style="padding-left: 27px;"
+                src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/Elon_Phoenix_logo.svg/1200px-Elon_Phoenix_logo.svg.png">
+            <live-text class="teamId" key="awayNameLower" style="font-weight: 600; font-size: 41px; padding-left: 32px;"></live-text>
+        </g-box>
+        <g-box height="57px" width="124px" style="background-image: linear-gradient(180deg, #b80415 0%, #88010e 100%);">
+            <live-text key="awayScore" style="font-size: 45px;"></live-text>
+        </g-box>
+    </div>
+    <div class="info" style="z-index: -1;">
+        <g-box height="23px" width="436px" style="background-image: linear-gradient(180deg, #dbdbdb 0%, #7f7f7f 100%);">
+        </g-box>
+        <g-box height="23px" width="124px" color="#0193cf"></g-box>
+    </div>
+</body>
+
+<script>
+    var tl = gsap.timeline({ paused: true, onComplete: function () { this.seek(0).pause(); console.log(this); } })
+    tl.from(".homeTeam", { duration: .5, scaleX: 0, opacity: 0, transformOrigin: "left", ease: "power4.inOut" })
+    tl.from(".awayTeam", { duration: .5, scaleX: 0, opacity: 0, transformOrigin: "left", ease: "power4.inOut" }, "-=0.5")
+    tl.from(".teamId", { duration: .1, x: "25px", opacity: 0 }, "-=.05")
+    tl.from(".stats", { duration: 0.2, opacity: 0, y: "25px" }, "-=.2")
+    tl.from(".info", { duration: 0.2, opacity: 0, y: "-25px" }, "-=.2")
+    tl.to("body", { duration: .2, opacity: 0 })
+    tl.addPause(.55)
+
+    socket.on("state-update", (payload) => {
+        console.log(payload)
+        if ("big-scoreboard:toggle" in payload) { tl.play() }
+    })
+</script>
+
+</html>
