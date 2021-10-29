@@ -1,4 +1,19 @@
 const liveTextObjects = {};
+let alpineInit = false;
+let cache = {};
+
+document.addEventListener('alpine:init', () => {
+    Alpine.store('sock', {
+        data: {...cache},
+        update (data) {
+            this.data = {...this.data, ...data}
+        },
+        getHomePlayer(name) {
+            return this.data.stats.teams.H.find(p => p.name == name)
+        }
+    })
+    alpineInit = true;
+})
 
 class LiveText extends HTMLElement {
     constructor() {
@@ -17,6 +32,7 @@ class LiveText extends HTMLElement {
     static update(key, value) {
         if(!(key in liveTextObjects)) { return; }
         let element = liveTextObjects[key];
+        if(element.innerText == value) { return ;}
         if(element.willFade) {
             element.tween.play().then(() => {
                 element.innerText = value;
@@ -26,22 +42,22 @@ class LiveText extends HTMLElement {
             element.innerText = value;
         }
     }
+
+    static updateBulk(payload) {
+        cache = {...cache, ...payload};
+        if(alpineInit) {
+            Alpine.store('sock').update(payload);
+        }
+        for(const property in payload) {
+            LiveText.update(property, payload[property]);
+        }
+    }
 }
 
-const dataStore = {};
 customElements.define('live-text', LiveText);
 
 const socket = io();
-socket.on("data-update", (payload) => {
-    console.log(payload);
-    const hasDataStore = typeof dataStore !== 'undefined';
-    for(const property in payload) {
-        LiveText.update(property, payload[property]);
-        if(hasDataStore) {
-            dataStore[property] = payload[property];
-        }
-    }
-});
+socket.on("state-update", LiveText.updateBulk);
 
 function getFromSocket(key) {
     return new Promise(resolve => {
@@ -51,4 +67,12 @@ function getFromSocket(key) {
     });
 }
 
-socket.emit("get-data-cache");
+function updateKey(key, value) {
+    return new Promise(resolve => {
+        socket.emit("update-key", key, value, (_) => {
+            resolve()
+        })
+    })
+}
+
+socket.emit("get-cache", LiveText.updateBulk);

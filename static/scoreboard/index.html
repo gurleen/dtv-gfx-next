@@ -4,6 +4,7 @@
     <title>DTV Graphics Next</title>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.4.2/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"
         integrity="sha512-UxP+UhJaGRWuMG2YC6LPWYpFQnsSgnor0VUF3BHdD83PS/pOpN+FYbZmrYN+ISX8jnvgVUciqP/fILOXDjZSwg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -70,6 +71,12 @@
 
     <div id="info" style="display: flex; justify-content: center;">
         <div>
+            <g-box class="awayPlayer awayPen" height="26px" width="175px" dcolor="awayColor">
+
+            </g-box>
+            <g-box class="awayCard awayPen" height="26px" width="26px" color="#f2ce4f"></g-box>
+        </div>
+        <div>
             <g-box class="anim5" height="26px" width="69px" color="#000">
                 <live-text fade="true" key="period"></live-text>
             </g-box>
@@ -79,11 +86,17 @@
                 <live-text style="color: black;" key="clock"></live-text>
             </g-box>
         </div>
+        <div>
+            <g-box class="homeCard homePen" height="26px" width="26px" color="#f2ce4f"></g-box>
+            <g-box class="homePlayer homePen" height="26px" width="175px" color="#000000">
+                <live-text style="color: white;" key="homePlayerCarded"></live-text>
+            </g-box>
+        </div>
     </div>
 </body>
 
 <script>
-    var tl = gsap.timeline({ paused: true, onComplete: function () { this.seek(0).pause(); console.log(this); } })
+    const tl = gsap.timeline({ paused: true, onComplete: function () { this.seek(0).pause(); console.log(this); } })
     tl.from(".anim1", { duration: .5, scaleX: 0, transformOrigin: "right", ease: "power4.out", stagger: { each: 0.1, from: "end", ease: "power2.out" } }, "-=0.5")
     tl.from(".anim2", { duration: .5, scaleX: 0, transformOrigin: "left", ease: "power4.out", stagger: { each: 0.1, from: "start", ease: "power2.out" } }, "-=0.7")
     tl.from(".anim3", { duration: .5, opacity: 0, ease: "power4.out" }, "-=0.5")
@@ -92,6 +105,12 @@
     tl.from(".anim6", { duration: .5, scaleX: 0, transformOrigin: "left", ease: "power4.out" }, "-=0.7")
     tl.addPause(1.2)
     tl.to("body", { duration: .15, opacity: 0 })
+
+    const hTl = gsap.timeline({ paused: true, onComplete: function () { this.seek(0).pause(); console.log(this); } })
+    hTl.from(".homeCard", {duration: .5, scaleY: 0, transformOrigin: "top", ease: "power4.out"})
+    hTl.from(".homePlayer", {duration: .5, scaleX: 0, transformOrigin: "left", ease: "power4.out"}, "-=0.35")
+    hTl.addPause(1.01)
+    hTl.to(".homePen", { duration: .15, opacity: 0 })
 
     socket.on("state-update", (payload) => {
         console.log(payload)

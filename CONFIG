@@ -1,7 +1,11 @@
-homeName=DREXEL
+homeName=DREXEL A
 homeNameLower=Drexel
+homeColor=#00437b
 homeRecord=(4-2)
-awayName=LA SALLE
-awayNameLower=La Salle
+awayName=DREXEL B
+awayNameLower=Drexel
 awayRecord=(2-4)
+awayColor=#00437b
 period=1st
+awayImage=https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/La_Salle_Explorers_logo.svg/1200px-La_Salle_Explorers_logo.svg.png
+homePlayerCarded=#23 SINGH

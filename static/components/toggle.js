@@ -6,6 +6,7 @@ class ToggleButton extends HTMLElement {
         const wrapper = document.createElement('button');
         wrapper.innerHTML = "<slot></slot>";
         wrapper.onclick = () => {
+            socket.emit("update-key", this.key, "");
             socket.emit("set-key", {
                 key: this.key,
                 value: "",

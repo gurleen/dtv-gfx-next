@@ -4,6 +4,7 @@
     <title>DTV Config</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script defer src="https://unpkg.com/alpinejs@3.4.2/dist/cdn.min.js"></script>
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
@@ -14,10 +15,40 @@
     <script src="components/toggle.js"></script>
 </head>
 
-<body>
-    <toggle-button key="scoreboard:toggle">Toggle Scoreboard</toggle-button>
-    <live-input key="period"></live-input>
-    <toggle-button key="big-scoreboard:toggle">Toggle Big Scoreboard</toggle-button>
+<style>
+    toggle-button, live-input, div {
+        margin: 25px;
+        padding: 15px;
+        border: 1px solid black;
+    }
+</style>
+
+<script>
+window.playerSelect = function(key) {
+    return {
+        key: key,
+        selected: null,
+        update(val) {
+            let name = val.substr(val.indexOf(' ')+1)
+            let player = Alpine.store('sock').getHomePlayer(name)
+            updateKey(key, player)
+        }
+    }
+}
+</script>
+
+<body class="pure-g">
+    <toggle-button class="pure-u-1-6" key="scoreboard:toggle">Toggle Scoreboard</toggle-button>
+    <live-input class="pure-u-1-6" key="period"></live-input>
+    <toggle-button class="pure-u-1-6" key="big-scoreboard:toggle">Toggle Big Scoreboard</toggle-button>
+
+    <div x-data="playerSelect('homePlayer')" x-init="$watch('selected', val => update(val))" class="pure-u-1-5">
+        <select x-model="selected">
+            <template x-for="player in $store.sock.data.stats.teams.H">
+                <option x-text="`${player.uni} ${player.name}`"></option>
+            </template>
+        </select>
+    </div>
 </body>
 
 </html>

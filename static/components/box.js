@@ -13,7 +13,7 @@ class GBox extends HTMLElement {
         const dc = this.getAttribute("dcolor");
         if(dc) { color = await getFromSocket(dc); }
         let c = hexToRgb(color || this.getAttribute("color") || "#000");
-        console.log(c);
+        console.log(this, c);
         const a = this.getAttribute("opacity") || "1"
         const rgba = this.hasAttribute("color")? `background-color: rgba(${c.r}, ${c.g}, ${c.b}, ${a});` : "";
         const style = `

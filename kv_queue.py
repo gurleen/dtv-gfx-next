@@ -14,8 +14,11 @@ class KeyValueQueue:
     async def state(self, key: str, value: str):
         return await self.queue.async_q.put((key, value, "state-update"))
 
+    async def obj(self, key: str, value: Any):
+        return await self.queue.async_q.put((key, value, "object-update"))
+
     async def put(self, item: Any):
-        self.queue.async_q.put(item)
+        await self.queue.async_q.put(item)
 
     async def get(self):
         return await self.queue.async_q.get()

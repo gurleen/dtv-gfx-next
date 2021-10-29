@@ -16,7 +16,7 @@ from producers.serial import read_allsport_cg, mock_allsport_cg
 from producers.config import read_from_config
 from kv_queue import KeyValueQueue
 from util.ident_fetch import get_items, get_ident, CONF_ROOT
-from ftp_server import run_ftp_server
+from producers.http_poller import poll_stats
 
 
 if getattr("sys", "frozen", False):
@@ -118,15 +118,13 @@ def main():
     loop.run_until_complete(site.start())
 
     loop.create_task(consumer(q))
-    loop.create_task(run_ftp_server(q.queue.sync_q))
     loop.create_task(read_from_config(q))
-    """
+    loop.create_task(poll_stats(q))
+
     if serial:
         loop.create_task(read_allsport_cg(q, loop, serial.device))
     else:
-        loop.create_task(read_allsport_cg(q, loop))
-    """
-    loop.create_task(mock_allsport_cg(q))
+        loop.create_task(mock_allsport_cg(q))
     # loop.create_task(watch_file(q))
 
     try:
