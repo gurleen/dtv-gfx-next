@@ -8,14 +8,15 @@ from aiohttp import web
 
 import producers
 from util.colors import colorscale
+from util.config_menu import config_window
 
 
 cache = dict()
 queue = None
 
 
-# DEBUG = os.getenv("DEBUG", default=False)
-DEBUG = False
+DEBUG = os.getenv("DEBUG", default=False)
+DEBUG = True
 if getattr("sys", "frozen", False):
     app_path = sys._MEIPASS
 else:
@@ -80,6 +81,9 @@ def setup_services(loop):
 
 def main():
     global queue
+
+    if not DEBUG:
+        data = config_window()
     
     logger.info("Welcome to dtv-gfx-next 🐉")
     logger.info("Go Dragons!")
