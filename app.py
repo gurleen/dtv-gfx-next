@@ -5,6 +5,7 @@ import socketio
 from janus import Queue
 from loguru import logger
 from aiohttp import web
+from distutils.util import strtobool
 
 import producers
 from util.colors import colorscale
@@ -15,8 +16,7 @@ cache = dict()
 queue = None
 
 
-DEBUG = os.getenv("DEBUG", default=False)
-DEBUG = True
+DEBUG = strtobool(os.getenv("DEBUG", default="false"))
 if getattr("sys", "frozen", False):
     app_path = sys._MEIPASS
 else:

@@ -35,10 +35,20 @@ window.playerSelect = function(key) {
         }
     }
 }
+
+window.takeDsk = function(state) {
+    fetch(`http://10.248.66.57/v1/shortcut?name=main_dsk1_value&value=${state}`)
+}
 </script>
 
 <body class="pure-g">
-    <toggle-button class="pure-u-1-6" key="scoreboard:toggle">Toggle Scoreboard</toggle-button>
+    <div class="pure-u-1-6 pure-g">
+        <toggle-button class="pure-u-1-2" key="scoreboard:toggle">Toggle Scoreboard</toggle-button>
+        <toggle-button class="pure-u-1-2" key="scoreboard:toggle-comp">Toggle Comparison Stat</toggle-button>
+        <toggle-button class="pure-u-1-2" key="scoreboard:toggle-text">Toggle Text Box</toggle-button>
+        <toggle-button class="pure-u-1-2" key="scoreboard:toggle-home">Toggle Home Slider</toggle-button>
+        <toggle-button class="pure-u-1-2" key="scoreboard:toggle-away">Toggle Away Slider</toggle-button>
+    </div>
     <live-input class="pure-u-1-6" key="period"></live-input>
     <toggle-button class="pure-u-1-6" key="big-scoreboard:toggle">Toggle Big Scoreboard</toggle-button>
 
@@ -48,6 +58,11 @@ window.playerSelect = function(key) {
                 <option x-text="`${player.uni} ${player.name}`"></option>
             </template>
         </select>
+    </div>
+
+    <div x-data class="pure-u-1-5 pure-g">
+        <button class="pure-u-1-1" @click="takeDsk(1)">TAKE GRAPHICS ON</button>
+        <button class="pure-u-1-1" @click="takeDsk(0)">TAKE GRAPHICS OFF</button>
     </div>
 </body>
 
