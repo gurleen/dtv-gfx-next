@@ -24,8 +24,9 @@ def config_window():
             ident = get_ident(team_obj[1])
             window.close()
             return {
+                "awayName": values["-TEAMS-"].upper(),
                 "awayColor": ident[0],
-                "awayImage": ident[1],
+                "awayImg": ident[1],
                 "com_port": values["-SERIAL-"]
             }
         elif event == sg.WINDOW_CLOSED:

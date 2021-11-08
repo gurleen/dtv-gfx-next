@@ -1,6 +1,9 @@
 const liveTextObjects = {};
 let alpineInit = false;
-let cache = {};
+let cache = {
+    "homePlayer": {"uni": "", "pos": "", "name": ""},
+    "awayPlayer": {"uni": "", "pos": "", "name": ""},
+};
 
 document.addEventListener('alpine:init', () => {
     Alpine.store('sock', {
