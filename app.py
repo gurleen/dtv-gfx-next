@@ -10,6 +10,7 @@ from distutils.util import strtobool
 import producers
 from util.colors import colorscale
 from util.config_menu import config_window
+from global_vars import GLOBALS
 
 
 cache = dict()
@@ -67,8 +68,10 @@ def connect(sid, environ, _):
     logger.info(f"Client at {ip} with sid {sid} connected.")
 
 
-async def create_queue() -> Queue:
-    return Queue()
+async def create_queue(defaults: dict) -> Queue:
+    q = Queue()
+    await q.async_q.put(defaults)
+    return q
 
 
 def setup_services(loop):
@@ -81,9 +84,11 @@ def setup_services(loop):
 
 def main():
     global queue
+    data = dict()
 
     if not DEBUG:
         data = config_window()
+        GLOBALS["com_port"] = data["com_port"] if data["com_port"] != "" else None
     
     logger.info("Welcome to dtv-gfx-next 🐉")
     logger.info("Go Dragons!")
@@ -91,7 +96,7 @@ def main():
         logger.info("RUNNING IN DEBUG MODE.")
 
     loop = asyncio.get_event_loop()
-    queue = loop.run_until_complete(create_queue())
+    queue = loop.run_until_complete(create_queue(data))
     prods = producers.collect_producers()
     setup_services(loop)
 

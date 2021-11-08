@@ -7,6 +7,10 @@ from typing import Optional
 import serial_asyncio
 from loguru import logger
 from producers.decorator import producer
+from global_vars import GLOBALS
+
+
+COM_PORT = GLOBALS.get("com_port", None)
 
 
 class Output(asyncio.Protocol):
@@ -47,11 +51,15 @@ class Output(asyncio.Protocol):
         logger.error("Connection to serial port lost!")
 
 @producer(prod_only=True)
-def read_allsport_cg(q: Queue, port: str = "/dev/tty.usbserial-1410"):
+def read_allsport_cg(q: Queue, port: str = COM_PORT):
     loop = asyncio.get_event_loop()
-    return serial_asyncio.create_serial_connection(
-        loop, lambda: Output(q), port
-    )
+    if COM_PORT:
+        return serial_asyncio.create_serial_connection(
+            loop, lambda: Output(q), port
+        )
+    else:
+        logger.info("COM Port not provided - defaulting to mock AllSport")
+        return mock_allsport_cg(q)
 
 @producer(debug_only=True)
 async def mock_allsport_cg(q: Queue):

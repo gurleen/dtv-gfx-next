@@ -23,7 +23,11 @@ def config_window():
             team_obj = next((x for x in teams if x[0] == values["-TEAMS-"]))
             ident = get_ident(team_obj[1])
             window.close()
-            return (*ident, values["-SERIAL-"])
+            return {
+                "awayColor": ident[0],
+                "awayImage": ident[1],
+                "com_port": values["-SERIAL-"]
+            }
         elif event == sg.WINDOW_CLOSED:
             window.close()
             quit()
