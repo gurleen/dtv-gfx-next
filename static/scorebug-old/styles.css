@@ -9,7 +9,7 @@
     top: 85%;
     left: 200px;
     height: 55px;
-    width: 800px;
+    width: 1135.65px;
     background-color: rgba(0, 0, 0, 0.9);
     display: flex;
     flex-wrap: wrap;
@@ -89,6 +89,8 @@
     width: 35px;
     height: 5px;
     background-color: white;
+    position: relative;
+    bottom: 10;
 }
 
 .spacer {
@@ -161,5 +163,10 @@
 .lthImg {
     position: relative;
     height: 95%;
+    width: auto;
+}
+
+.sponsorLogo {
+    height: 55px;
     width: auto;
 }

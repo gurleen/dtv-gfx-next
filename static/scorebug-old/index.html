@@ -14,6 +14,7 @@
     integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
     crossorigin="anonymous"></script>
   <script src="../components/livetext.js"></script>
+  <script src="../components/image.js"></script>
 </head>
 
 <body class="root">
@@ -30,6 +31,9 @@
     <div class="scoreArea anim2 awayColorDarker" id="awayScoreArea">
       <live-text key="awayScore" fade="true" class="score" id="awayScore">0</live-text>
     </div>
+
+    
+
     <div class="infoArea anim2">
       <live-text key="period" id="period"></live-text>
       <live-text key="clock" id="clock"></live-text>
@@ -37,6 +41,8 @@
     <div class="shotClockArea anim2">
       <live-text key="shotClock" id="shotClock"></live-text>
     </div>
+
+    <img class="sponsorLogo" src="IBX.jpg">
 
     <div class="timeouts">
       <div class="singleTimeout" id="homeTO1"></div>
@@ -72,27 +78,27 @@
     </div>
   </div>
 
-  <div class="slider" id="homeLthSlider">
+  <div x-data class="slider" id="homeLthSlider">
     <div class="sliderTitleBoxAlt homeColor" id="slider3Anim2">
-      <img v-bind:src="homeImg" class="lthImg">
+      <img :src="$store.sock.data.homeImage" class="lthImg">
       <div class="numPosBox" v-bind:style="homeSecondary">
-        {{ homeLth.num }} <span id="divide"></span> {{ homeLth.pos }}
+        <span x-text="$store.sock.data.homePlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.homePlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider3Anim2">
-      <strong>{{ homeLth.name }}</strong>&emsp;{{ homeLth.stat }}
+      <strong><span x-text="$store.sock.data.homePlayer.name"></span></strong>&emsp;<span>STAT</span>
     </div>
   </div>
 
-  <div class="slider" id="awayLthSlider">
+  <div x-data class="slider" id="awayLthSlider">
     <div class="sliderTitleBoxAlt awayColor" id="slider4Anim2">
-      <img v-bind:src="awayImg" class="lthImg">
+      <img :src="awayImg" class="lthImg">
       <div class="numPosBox" v-bind:style="awaySecondary">
-        {{ awayLth.num }} <span id="divide"></span> {{ awayLth.pos }}
+        <span x-text="$store.sock.data.awayPlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.awayPlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider4Anim2">
-      <strong>{{ awayLth.name }}</strong>&emsp;{{ awayLth.stat }}
+      <strong><span x-text="$store.sock.data.awayPlayer.name"></span></strong>&emsp;<span>STAT</span>
     </div>
   </div>
   
@@ -102,7 +108,7 @@
   // SCOREBUG ANIMATION
 	var tl = gsap.timeline({paused: true, onComplete: () => {this.tl.seek(0); this.tl.pause()}})
 	tl.from(".anim1", {duration: .75, scaleX: 0, transformOrigin: "left", ease: "power4.inOut"})
-	tl.from(".anim2", {duration: .5, y: 20, opacity: 0, stagger: 0.1}, "-=.5")
+	tl.from(".anim2", {duration: .5, y: 20, opacity: 0, stagger: 0.05}, "-=.5")
 	tl.addPause(1.5)
 	tl.to("#scorebug", {duration: .2, opacity: 0})
 	tl.reverse()
@@ -137,6 +143,8 @@
     if ("scoreboard:toggle-home" in payload ) { !homeLthTl.reversed()? homeLthTl.reverse() : homeLthTl.play() }
     if ("scoreboard:toggle-away" in payload ) { !awayLthTl.reversed()? awayLthTl.reverse() : awayLthTl.play() }
 })
+
+tl.play()
 </script>
 
 </html>
