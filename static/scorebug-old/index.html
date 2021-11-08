@@ -108,7 +108,7 @@
   // SCOREBUG ANIMATION
 	var tl = gsap.timeline({paused: true, onComplete: () => {this.tl.seek(0); this.tl.pause()}})
 	tl.from(".anim1", {duration: .75, scaleX: 0, transformOrigin: "left", ease: "power4.inOut"})
-	tl.from(".anim2", {duration: .5, y: 20, opacity: 0, stagger: 0.05}, "-=.5")
+	tl.from(".anim2", {duration: .5, y: 20, opacity: 0, stagger: 0.03}, "-=.5")
 	tl.addPause(1.5)
 	tl.to("#scorebug", {duration: .2, opacity: 0})
 	tl.reverse()
