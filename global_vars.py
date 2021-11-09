@@ -1,1 +1,1 @@
-GLOBALS = dict()
+COM_PORT = None

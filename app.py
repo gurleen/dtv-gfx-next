@@ -10,7 +10,7 @@ from distutils.util import strtobool
 import producers
 from util.colors import colorscale
 from util.config_menu import config_window
-from global_vars import GLOBALS
+import global_vars
 
 
 cache = dict()
@@ -29,7 +29,7 @@ async def generate_styles(request):
     for k, c in colors.items():
         rv += f".{k} {{ background-color: {c}; }}\n"
         rv += f".{k}Darker {{ background-color: {colorscale(c, 0.6)}; }}\n"
-    return web.Response(text=rv)
+    return web.Response(text=rv, content_type="text/css")
     
 
 sio = socketio.AsyncServer()
@@ -88,7 +88,7 @@ def main():
 
     if not DEBUG:
         data = config_window()
-        GLOBALS["com_port"] = data["com_port"]
+        global_vars.COM_PORT = data["com_port"]
     
     logger.info("Welcome to dtv-gfx-next 🐉")
     logger.info("Go Dragons!")

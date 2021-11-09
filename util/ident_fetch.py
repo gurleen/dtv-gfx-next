@@ -35,7 +35,7 @@ def get_ident(url):
     name = soup.title.string.split(" Color Codes")[0].split(" Colors")[0]
     wiki = wikipedia.page(name)
     image = [x for x in wiki.images if 'icon_edit' not in x and 'logo' in x][-1]
-    return (hexc[11:-1].lstrip(), image)
+    return (hexc[11:-1].lstrip(), image, name)
 
 
 def main():

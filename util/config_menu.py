@@ -25,9 +25,12 @@ def config_window():
             window.close()
             return {
                 "awayName": values["-TEAMS-"].upper(),
+                "awayNameLower": values["-TEAMS-"],
+                "awayTeamName": ident[2].lstrip(values["-TEAMS-"]).lstrip(" ").upper(),
+                "awayTeamNameLower": ident[2].lstrip(values["-TEAMS-"]).lstrip(" "),
                 "awayColor": ident[0],
                 "awayImg": ident[1],
-                "com_port": values["-SERIAL-"]
+                "com_port": values["-SERIAL-"].device if not isinstance(values["-SERIAL-"], str) else None
             }
         elif event == sg.WINDOW_CLOSED:
             window.close()

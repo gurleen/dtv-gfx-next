@@ -7,10 +7,7 @@ from typing import Optional
 import serial_asyncio
 from loguru import logger
 from producers.decorator import producer
-from global_vars import GLOBALS
-
-
-COM_PORT = GLOBALS.get("com_port", None)
+from global_vars import COM_PORT
 
 
 class Output(asyncio.Protocol):
@@ -53,7 +50,8 @@ class Output(asyncio.Protocol):
 @producer(prod_only=True)
 def read_allsport_cg(q: Queue, port: str = COM_PORT):
     loop = asyncio.get_event_loop()
-    if COM_PORT:
+    print(port)
+    if port:
         return serial_asyncio.create_serial_connection(
             loop, lambda: Output(q), port
         )
