@@ -52,7 +52,7 @@ window.takeDsk = function(state) {
         <toggle-button class="pure-u-1-2" key="scoreboard:toggle-away">Toggle Away Slider</toggle-button>
     </div>
     <live-input class="pure-u-1-6" key="period"></live-input>
-    <toggle-button class="pure-u-1-6" key="big-scoreboard:toggle">Toggle Big Scoreboard</toggle-button>
+    <toggle-button class="pure-u-1-6" key="scoretobreak:toggle">Toggle Big Scoreboard</toggle-button>
 
     <div x-data="playerSelect('homePlayer')" x-init="$watch('selected', val => update(val)); update($store.sock.data.stats.teams.H[0])" class="pure-u-1-5">
         <select x-model="selected">

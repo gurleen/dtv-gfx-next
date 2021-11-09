@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import asyncio
 import socketio
@@ -22,6 +23,11 @@ if getattr("sys", "frozen", False):
     app_path = sys._MEIPASS
 else:
     app_path = os.path.dirname(os.path.abspath(__file__))
+    
+    
+logger.remove()
+log_level = "DEBUG" if DEBUG else "INFO"
+logger.add(sys.stderr, level=log_level)
 
 async def generate_styles(request):
     colors = {k: v for k, v in cache.items() if "color" in k.lower()}
