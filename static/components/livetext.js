@@ -13,6 +13,9 @@ document.addEventListener('alpine:init', () => {
         },
         getHomePlayer(name) {
             return this.data.stats.teams.H.find(p => p.name == name)
+        },
+        getAwayPlayer(name) {
+            return this.data.stats.teams.V.find(p => p.name == name)
         }
     })
     alpineInit = true;

@@ -86,19 +86,19 @@
       </div>
     </div>
     <div class="sliderContentArea" id="slider3Anim2">
-      <strong><span x-text="$store.sock.data.homePlayer.name"></span></strong>&emsp;<span>STAT</span>
+      <strong><span x-text="$store.sock.data.homePlayer.name"></span></strong>&emsp;<span x-text="$store.sock.data.homePlayer.statText"></span>
     </div>
   </div>
 
   <div x-data class="slider" id="awayLthSlider">
     <div class="sliderTitleBoxAlt awayColor" id="slider4Anim2">
-      <img :src="awayImg" class="lthImg">
+      <img :src="$store.sock.data.awayImage" class="lthImg">
       <div class="numPosBox" v-bind:style="awaySecondary">
         <span x-text="$store.sock.data.awayPlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.awayPlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider4Anim2">
-      <strong><span x-text="$store.sock.data.awayPlayer.name"></span></strong>&emsp;<span>STAT</span>
+      <strong><span x-text="$store.sock.data.awayPlayer.name"></span></strong>&emsp;<span x-text="$store.sock.data.awayPlayer.statText"></span>
     </div>
   </div>
   

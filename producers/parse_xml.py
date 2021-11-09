@@ -45,7 +45,7 @@ def parse(raw_xml: str):
     teams = {}
     for team in root.iter("team"):
         team_side = team.attrib["vh"]
-        teams[team_side] = [x.attrib for x in team.iter("player")]
+        teams[team_side] = [{**x.attrib, **x.find("stats").attrib} for x in team.iter("player")]
     return {
         "officials": officals,
         "plays": plays,

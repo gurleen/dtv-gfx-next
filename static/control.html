@@ -28,11 +28,17 @@ window.playerSelect = function(key) {
     return {
         key: key,
         selected: null,
-        update(val) {
+        update(val, isHome) {
             let name = val.substr(val.indexOf(' ')+1)
-            let player = Alpine.store('sock').getHomePlayer(name)
+            let player
+            if(isHome) {
+                player = Alpine.store('sock').getHomePlayer(name)
+            } else {
+                player = Alpine.store('sock').getAwayPlayer(name)
+            }
             let nameSplit = player.name.split(", ")
-            player.name = `${nameSplit[1]} ${nameSplit[0]}`
+            player.name = `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase()
+            player.statText = `${player.tp} PTS ${player.ast} AST ${player.blk} BLK`
             updateKey(key, player)
         }
     }
@@ -54,9 +60,17 @@ window.takeDsk = function(state) {
     <live-input class="pure-u-1-6" key="period"></live-input>
     <toggle-button class="pure-u-1-6" key="scoretobreak:toggle">Toggle Big Scoreboard</toggle-button>
 
-    <div x-data="playerSelect('homePlayer')" x-init="$watch('selected', val => update(val)); update($store.sock.data.stats.teams.H[0])" class="pure-u-1-5">
+    <div x-data="playerSelect('homePlayer', true)" x-init="$watch('selected', val => update(val)); update($store.sock.data.stats.teams.H[0])" class="pure-u-1-5">
         <select x-model="selected">
             <template x-for="player in $store.sock.data.stats.teams.H">
+                <option x-text="`${player.uni} ${player.name}`"></option>
+            </template>
+        </select>
+    </div>
+
+    <div x-data="playerSelect('awayPlayer', false)" x-init="$watch('selected', val => update(val)); update($store.sock.data.stats.teams.V[0])" class="pure-u-1-5">
+        <select x-model="selected">
+            <template x-for="player in $store.sock.data.stats.teams.V">
                 <option x-text="`${player.uni} ${player.name}`"></option>
             </template>
         </select>
