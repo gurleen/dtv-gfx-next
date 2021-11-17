@@ -1,1 +1,1 @@
-COM_PORT = None
+COM_PORT = "COM3"

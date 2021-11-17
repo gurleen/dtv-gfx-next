@@ -34,6 +34,7 @@ window.playerSelect = function(key) {
             let nameSplit = player.name.split(", ")
             player.name = `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase()
             player.statText = `${player.tp} PTS ${player.ast} AST ${player.blk} BLK`
+			console.log(player)
             updateKey(key, player)
         },
         updateAway(val) {
@@ -42,6 +43,7 @@ window.playerSelect = function(key) {
             let nameSplit = player.name.split(", ")
             player.name = `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase()
             player.statText = `${player.tp} PTS ${player.ast} AST ${player.blk} BLK`
+			console.log(player)
             updateKey(key, player)
         }
     }

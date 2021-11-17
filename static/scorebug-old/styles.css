@@ -170,3 +170,7 @@
     height: 55px;
     width: auto;
 }
+
+.hiddenTO {
+	opacity: 0;
+}

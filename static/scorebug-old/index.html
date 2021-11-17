@@ -44,20 +44,20 @@
 
     <img class="sponsorLogo anim2" src="IBX.jpg">
 
-    <div class="timeouts">
-      <div class="singleTimeout" id="homeTO1"></div>
-      <div class="singleTimeout" id="homeTO2"></div>
-      <div class="singleTimeout" id="homeTO3"></div>
-      <div class="singleTimeout" id="homeTO4"></div>
+    <div x-data class="timeouts">
+      <div x-bind:class="$store.sock.data.homeTO >= 4? 'hiddenTO' : ''" class="singleTimeout" id="homeTO1"></div>
+      <div x-bind:class="$store.sock.data.homeTO >= 3? 'hiddenTO' : ''" class="singleTimeout" id="homeTO2"></div>
+      <div x-bind:class="$store.sock.data.homeTO >= 2? 'hiddenTO' : ''" class="singleTimeout" id="homeTO3"></div>
+      <div x-bind:class="$store.sock.data.homeTO >= 1? 'hiddenTO' : ''" class="singleTimeout" id="homeTO4"></div>
     </div>
 
     <div class="spacer"></div>
 
-    <div class="timeouts">
-      <div class="singleTimeout" id="awayTO1"></div>
-      <div class="singleTimeout" id="awayTO2"></div>
-      <div class="singleTimeout" id="awayTO3"></div>
-      <div class="singleTimeout" id="awayTO4"></div>
+    <div x-data class="timeouts">
+      <div x-bind:class="$store.sock.data.awayTO >= 4? 'hiddenTO' : ''" class="singleTimeout" id="awayTO1"></div>
+      <div x-bind:class="$store.sock.data.awayTO >= 3? 'hiddenTO' : ''" class="singleTimeout" id="awayTO2"></div>
+      <div x-bind:class="$store.sock.data.awayTO >= 2? 'hiddenTO' : ''" class="singleTimeout" id="awayTO3"></div>
+      <div x-bind:class="$store.sock.data.awayTO >= 1? 'hiddenTO' : ''" class="singleTimeout" id="awayTO4"></div>
     </div>
   </div>
 
@@ -80,7 +80,7 @@
 
   <div x-data class="slider" id="homeLthSlider">
     <div class="sliderTitleBoxAlt homeColor" id="slider3Anim2">
-      <img :src="$store.sock.data.homeImage" class="lthImg">
+      <img :src="$store.sock.data.homeImg" class="lthImg">
       <div class="numPosBox" v-bind:style="homeSecondary">
         <span x-text="$store.sock.data.homePlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.homePlayer.pos.toUpperCase()"></span>
       </div>
@@ -92,7 +92,7 @@
 
   <div x-data class="slider" id="awayLthSlider">
     <div class="sliderTitleBoxAlt awayColor" id="slider4Anim2">
-      <img :src="$store.sock.data.awayImage" class="lthImg">
+      <img :src="$store.sock.data.awayImg" class="lthImg">
       <div class="numPosBox" v-bind:style="awaySecondary">
         <span x-text="$store.sock.data.awayPlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.awayPlayer.pos.toUpperCase()"></span>
       </div>
