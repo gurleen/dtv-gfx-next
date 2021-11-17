@@ -61,44 +61,41 @@
     </div>
   </div>
 
-  <div class="slider" id="slider1">
+  <div x-data class="slider" id="slider1">
     <live-text key="compStatName" class="sliderTitleBox" id="slider1Anim2">
     </live-text>
-    <div class="sliderContentArea sliderAnim2">
-      <strong>{{ homeName }}</strong>  {{ compStat.homeStat }}   <strong>{{ awayName }}</strong>  {{ compStat.awayStat }}
+    <div class="sliderContentArea sliderAnim2" x-html="$sock.compStatText">
     </div>
   </div>
 
   <div class="slider" id="slider2">
     <div class="sliderTitleBox" id="slider2Anim2">
-      {{ textSlider.title }}
+      <live-text key="textSliderTitle" fade="true"></live-text>
     </div>
-    <div class="sliderContentArea slider2Anim2">
-      {{ textSlider.subtitle }}
-    </div>
+    <live-text key="textSliderSubtitle" fade="true" class="sliderContentArea slider2Anim2"></live-text>
   </div>
 
   <div x-data class="slider" id="homeLthSlider">
     <div class="sliderTitleBoxAlt homeColor" id="slider3Anim2">
-      <img :src="$store.sock.data.homeImage" class="lthImg">
+      <img :src="$sock.homeImage" class="lthImg">
       <div class="numPosBox" v-bind:style="homeSecondary">
-        <span x-text="$store.sock.data.homePlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.homePlayer.pos.toUpperCase()"></span>
+        <span x-text="$sock.homePlayer.uni"></span> <span id="divide"></span> <span x-text="$sock.homePlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider3Anim2">
-      <strong><span x-text="$store.sock.data.homePlayer.name"></span></strong>&emsp;<span x-text="$store.sock.data.homePlayer.statText"></span>
+      <strong><span x-text="$sock.homePlayer.normalName"></span></strong>&emsp;<span x-text="$sock.homePlayer.stat"></span>
     </div>
   </div>
 
   <div x-data class="slider" id="awayLthSlider">
     <div class="sliderTitleBoxAlt awayColor" id="slider4Anim2">
-      <img :src="$store.sock.data.awayImage" class="lthImg">
+      <img :src="$sock.awayImage" class="lthImg">
       <div class="numPosBox" v-bind:style="awaySecondary">
-        <span x-text="$store.sock.data.awayPlayer.uni"></span> <span id="divide"></span> <span x-text="$store.sock.data.awayPlayer.pos.toUpperCase()"></span>
+        <span x-text="$sock.awayPlayer.uni"></span> <span id="divide"></span> <span x-text="$sock.awayPlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider4Anim2">
-      <strong><span x-text="$store.sock.data.awayPlayer.name"></span></strong>&emsp;<span x-text="$store.sock.data.awayPlayer.statText"></span>
+      <strong><span x-text="$sock.awayPlayer.name"></span></strong>&emsp;<span x-text="$sock.awayPlayer.stat"></span>
     </div>
   </div>
   
@@ -142,9 +139,7 @@
     if ("scoreboard:toggle-text" in payload ) { !slider2Tl.reversed()? slider2Tl.reverse() : slider2Tl.play() }
     if ("scoreboard:toggle-home" in payload ) { !homeLthTl.reversed()? homeLthTl.reverse() : homeLthTl.play() }
     if ("scoreboard:toggle-away" in payload ) { !awayLthTl.reversed()? awayLthTl.reverse() : awayLthTl.play() }
-})
-
-tl.play()
+  })
 </script>
 
 </html>

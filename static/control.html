@@ -16,7 +16,9 @@
 </head>
 
 <style>
-    toggle-button, live-input, div {
+    toggle-button,
+    live-input,
+    div {
         margin: 25px;
         padding: 15px;
         border: 1px solid black;
@@ -24,32 +26,85 @@
 </style>
 
 <script>
-window.playerSelect = function(key) {
-    return {
-        key: key,
-        selected: null,
-        updateHome(val) {
-            let name = val.substr(val.indexOf(' ')+1)
-            let player = Alpine.store('sock').getHomePlayer(name)
-            let nameSplit = player.name.split(", ")
-            player.name = `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase()
-            player.statText = `${player.tp} PTS ${player.ast} AST ${player.blk} BLK`
-            updateKey(key, player)
-        },
-        updateAway(val) {
-            let name = val.substr(val.indexOf(' ')+1)
-            let player = Alpine.store('sock').getAwayPlayer(name)
-            let nameSplit = player.name.split(", ")
-            player.name = `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase()
-            player.statText = `${player.tp} PTS ${player.ast} AST ${player.blk} BLK`
-            updateKey(key, player)
+    window.takeDsk = function (state) {
+        fetch(`http://10.248.66.57/v1/shortcut?name=main_dsk1_value&value=${state}`)
+    }
+
+    window.playerSelect = function (key, team) {
+        return {
+            key: key,
+            selected: 0,
+            update() {
+                let player = Alpine.store('sock').data.stats.teams[team][this.selected]
+                let nameSplit = player.checkname.split(",")
+                player.normalName = nameSplit[1] + " " + nameSplit[0]
+                player.stat = `${player.tp} PTS ${player.fgm}/${player.fga} FG ${player.ast} AST`
+                updateKey(key, player)
+            }
         }
     }
-}
 
-window.takeDsk = function(state) {
-    fetch(`http://10.248.66.57/v1/shortcut?name=main_dsk1_value&value=${state}`)
-}
+    window.compStat = function () {
+        return {
+            stat: "fgm",
+            name: "",
+            options: [
+                "fgm",
+                "fga",
+                "fgm3",
+                "fga3",
+                "ftm",
+                "fta",
+                "tp",
+                "blk",
+                "stl",
+                "ast",
+                "min",
+                "oreb",
+                "dreb",
+                "treb",
+                "pf",
+                "tf",
+                "to",
+                "dq",
+                "fgpct",
+                "fg3pct",
+                "ftpct"
+            ],
+            update() {
+                updateKey("compStatName", this.name)
+                let homeStat = Alpine.store('sock').data.stats.box.H[this.stat]
+                let awayStat = Alpine.store('sock').data.stats.box.V[this.stat]
+                if(this.stat.includes("pct")) {
+                    homeStat += "%"
+                    awayStat += "%"
+                }
+                let text = `<strong>DREXEL</strong> &nbsp;${homeStat}&emsp;&emsp; <strong>LA SALLE</strong> &nbsp;${awayStat}`
+                updateKey("compStatText", text)
+            }
+        }
+    }
+
+    window.textSlider = function() {
+        return {
+            defaults: [
+                {title: "Commentators", subtitle: "Ari Bluestein and Kayla Bacon"},
+                {title: "Venue", subtitle: "Daskalakis Athletic Center - Philadelphia, PA"}
+            ],
+            selectedPreset: 0,
+            title: "",
+            subtitle: "",
+            update() {
+                updateKey("textSliderTitle", this.title)
+                updateKey("textSliderSubtitle", this.subtitle)
+            },
+            usePreset() {
+                let preset = this.defaults[this.selectedPreset]
+                this.title = preset.title
+                this.subtitle = preset.subtitle
+            }
+        }
+    }
 </script>
 
 <body class="pure-g">
@@ -63,25 +118,54 @@ window.takeDsk = function(state) {
     <live-input class="pure-u-1-6" key="period"></live-input>
     <toggle-button class="pure-u-1-6" key="scoretobreak:toggle">Toggle Big Scoreboard</toggle-button>
 
-    <div x-data="playerSelect('homePlayer')" x-init="$watch('selected', val => updateHome(val)); updateHome($store.sock.data.stats.teams.H[0])" class="pure-u-1-5">
+    <div x-data="playerSelect('homePlayer', 'H')" class="pure-u-1-5">
         <select x-model="selected">
-            <template x-for="player in $store.sock.data.stats.teams.H">
-                <option x-text="`${player.uni} ${player.name}`"></option>
+            <template x-for="(player, idx) in $sock.stats.teams.H">
+                <option :value="idx" x-text="player.name"></option>
             </template>
         </select>
+        <button @click="update()">Update</button>
     </div>
 
-    <div x-data="playerSelect('awayPlayer')" x-init="$watch('selected', val => updateAway(val)); updateAway($store.sock.data.stats.teams.V[0])" class="pure-u-1-5">
+    <div x-data="playerSelect('awayPlayer', 'V')" class="pure-u-1-5">
         <select x-model="selected">
-            <template x-for="player in $store.sock.data.stats.teams.V">
-                <option x-text="`${player.uni} ${player.name}`"></option>
+            <template x-for="(player, idx) in $sock.stats.teams.V">
+                <option :value="idx" x-text="player.name"></option>
             </template>
         </select>
+        <button @click="update()">Update</button>
     </div>
 
     <div x-data class="pure-u-1-5 pure-g">
         <button class="pure-u-1-1" @click="takeDsk(1)">TAKE GRAPHICS ON</button>
         <button class="pure-u-1-1" @click="takeDsk(0)">TAKE GRAPHICS OFF</button>
+    </div>
+
+    <div x-data="compStat()" class="pure-u-1-5 pure-g">
+        <input x-model="name">
+        <select x-model="stat">
+            <template x-for="opt in options">
+                <option x-text="opt"></option>
+            </template>
+        </select>
+        <button @click="update()">Update</button>
+    </div>
+
+    <div x-data="textSlider()" class="pure-u-1-5 pure-g">
+        <select x-model="selectedPreset">
+            <template x-for="(preset, idx) in defaults">
+                <option :value="idx" x-text="preset.title"></option>
+            </template>
+        </select>
+        <button @click="usePreset()">Use Preset</button><br>
+
+        <label for="title">Title</label>
+        <input name="title" x-model="title"> <br>
+
+        <label for="subtitle">Subtitle</label>
+        <input name="subtitle" x-model="subtitle">
+
+        <button @click="update()">Update</button>
     </div>
 </body>
 

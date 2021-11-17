@@ -3,6 +3,7 @@ from serial.tools.list_ports import comports
 
 from util.ident_fetch import get_items, get_ident, CONF_ROOT
 
+
 def config_window():
     ports = comports()
     confs = get_items(CONF_ROOT)
@@ -14,7 +15,7 @@ def config_window():
         [sg.Combo([], enable_events=True, key="-TEAMS-", expand_x=True)],
         [sg.Text("Select AllSport CG Port")],
         [sg.Combo(ports, key="-SERIAL-")],
-        [sg.Button("OK")]
+        [sg.Button("OK")],
     ]
     window = sg.Window("DragonsTV Graphics", layout)
     while True:
@@ -30,7 +31,9 @@ def config_window():
                 "awayTeamNameLower": ident[2].lstrip(values["-TEAMS-"]).lstrip(" "),
                 "awayColor": ident[0],
                 "awayImg": ident[1],
-                "com_port": values["-SERIAL-"].device if not isinstance(values["-SERIAL-"], str) else None
+                "com_port": values["-SERIAL-"].device
+                if not isinstance(values["-SERIAL-"], str)
+                else None,
             }
         elif event == sg.WINDOW_CLOSED:
             window.close()

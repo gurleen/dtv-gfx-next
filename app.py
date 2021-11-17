@@ -23,11 +23,12 @@ if getattr("sys", "frozen", False):
     app_path = sys._MEIPASS
 else:
     app_path = os.path.dirname(os.path.abspath(__file__))
-    
-    
+
+
 logger.remove()
 log_level = "DEBUG" if DEBUG else "INFO"
 logger.add(sys.stderr, level=log_level)
+
 
 async def generate_styles(request):
     colors = {k: v for k, v in cache.items() if "color" in k.lower()}
@@ -36,7 +37,7 @@ async def generate_styles(request):
         rv += f".{k} {{ background-color: {c}; }}\n"
         rv += f".{k}Darker {{ background-color: {colorscale(c, 0.6)}; }}\n"
     return web.Response(text=rv, content_type="text/css")
-    
+
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -95,7 +96,7 @@ def main():
     if not DEBUG:
         data = config_window()
         global_vars.COM_PORT = data["com_port"]
-    
+
     logger.info("Welcome to dtv-gfx-next 🐉")
     logger.info("Go Dragons!")
     if DEBUG:
@@ -112,13 +113,17 @@ def main():
     logger.info("Initializing producers...")
 
     for producer, debug_only, prod_only in prods:
-        should_run = any(((DEBUG and debug_only),
-        (not DEBUG and prod_only),
-        (not debug_only and not prod_only)))
+        should_run = any(
+            (
+                (DEBUG and debug_only),
+                (not DEBUG and prod_only),
+                (not debug_only and not prod_only),
+            )
+        )
 
         if should_run:
             loop.create_task(producer(queue))
-    
+
     logger.info("All producers initialized.")
 
     logger.info("Starting async event loop")

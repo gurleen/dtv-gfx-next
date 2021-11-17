@@ -3,12 +3,14 @@ From: https://thadeusb.com/weblog/2010/10/10/python_scale_hex_color/
 """
 import math
 
+
 def clamp(val, minimum=0, maximum=255):
     if val < minimum:
         return minimum
     if val > maximum:
         return maximum
     return val
+
 
 def colorscale(hexstr, scalefactor):
     """
@@ -25,7 +27,7 @@ def colorscale(hexstr, scalefactor):
     #4F75D2
     """
 
-    hexstr = hexstr.strip('#')
+    hexstr = hexstr.strip("#")
 
     if scalefactor < 0 or len(hexstr) != 6:
         return hexstr
