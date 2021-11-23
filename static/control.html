@@ -35,10 +35,11 @@
             key: key,
             selected: 0,
             update() {
+                updateKey(`${this.key}Num`, parseInt(this.selected))
                 let player = Alpine.store('sock').data.stats.teams[team][this.selected]
                 let nameSplit = player.checkname.split(",")
                 player.normalName = nameSplit[1] + " " + nameSplit[0]
-                player.stat = `${player.tp} PTS ${player.fgm}/${player.fga} FG ${player.ast} AST`
+                // player.stat = `${player.tp} PTS ${player.fgm}/${player.fga} FG ${player.ast} AST`
                 updateKey(key, player)
             }
         }
@@ -72,6 +73,7 @@
                 "ftpct"
             ],
             update() {
+                updateKey("compStatType", this.stat)
                 updateKey("compStatName", this.name)
                 let homeStat = Alpine.store('sock').data.stats.box.H[this.stat]
                 let awayStat = Alpine.store('sock').data.stats.box.V[this.stat]

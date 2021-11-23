@@ -1,13 +1,13 @@
 .root {
-    height: 720px;
-    width: 1280px;
+    height: 1080px;
+    width: 1920px;
     color: transparent;
 }
 
 .container {
     position: relative;
-    top: 85%;
-    left: 200px;
+    top: 950px;
+    left: 392px;
     height: 55px;
     width: 1135.65px;
     background-color: rgba(0, 0, 0, 0.9);
@@ -27,7 +27,7 @@
     font-weight: bolder;
     position: relative;
     left: 30px;
-    top: 20%;
+    top: -25%;
 }
 
 .scoreArea {
@@ -98,14 +98,14 @@
 }
 
 .slider {
-    left: 208px;
+    left: 400px;
     width: 800px;
     height: 36px;
     background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     position: absolute;
     z-index: -1;
-    top: 585px;
+    top: 922px;
 }
 
 .sliderTitleBox {
@@ -173,4 +173,34 @@
 
 .hiddenTO {
 	opacity: 0;
+}
+
+.compSlider {
+    width: 560px;
+}
+
+.compStatTitle {
+    min-width: 150px;
+    color: white;
+    font-size: 20px;
+    font-family: "Open Sans";
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.compStatValue {
+    width: 205px;
+    color: white;
+    font-size: 30px;
+    font-family: "Open Sans";
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slider2Anim2 {
+    top: -35%;
 }

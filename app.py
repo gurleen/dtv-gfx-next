@@ -40,10 +40,14 @@ async def generate_styles(request):
     return web.Response(text=rv, content_type="text/css")
 
 
+async def get_full_cache(request):
+    return web.Response(text=json.dumps(cache), content_type="application/json")
+
+
 sio = socketio.AsyncServer()
 app = web.Application()
 sio.attach(app)
-app.add_routes([web.get("/styles", generate_styles)])
+app.add_routes([web.get("/styles", generate_styles), web.get("/cache", get_full_cache)])
 app.router.add_static("/", os.path.join(app_path, "static"), show_index=True)
 
 
