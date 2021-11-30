@@ -70,7 +70,6 @@ def get_key(sio, key):
 
 @sio.on("update-key")
 async def update_key(sio, key, value):
-    logger.debug(f"{key}: {value}")
     await queue.async_q.put({key: value})
 
 
@@ -116,7 +115,7 @@ def main():
     logger.info("Welcome to dtv-gfx-next 🐉")
     logger.info("Go Dragons!")
     if DEBUG:
-        logger.info("RUNNING IN DEBUG MODE.")
+        logger.info("RUNNING IN DEBUG MODE")
 
     loop = asyncio.get_event_loop()
     print("DATA:", data)
