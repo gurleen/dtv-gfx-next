@@ -7,6 +7,7 @@ from typing import Optional
 import serial_asyncio
 from loguru import logger
 from producers.decorator import producer
+from global_vars import COM_PORT
 
 
 class Output(asyncio.Protocol):
@@ -23,7 +24,7 @@ class Output(asyncio.Protocol):
         logger.info("Connected to AllSport CG.")
 
     def data_received(self, data) -> None:
-        if b'\x04' in data:
+        if b"\x04" in data:
             asyncio.ensure_future(self.flush_data(), loop=asyncio.get_event_loop())
         else:
             self.line += data
@@ -36,7 +37,7 @@ class Output(asyncio.Protocol):
             "homeScore": line[13:15].strip(),
             # "homeScore": line[25:27].strip(),
             # "awayScore": line[27:29].strip()
-            "awayScore": line[16:18].strip()
+            "awayScore": line[16:18].strip(),
         }
         for k, v in rv.items():
             self.cache[k] = v
@@ -46,12 +47,17 @@ class Output(asyncio.Protocol):
     def connection_lost(self, exc: Optional[Exception]) -> None:
         logger.error("Connection to serial port lost!")
 
+
 @producer(prod_only=True)
-def read_allsport_cg(q: Queue, port: str = "/dev/tty.usbserial-1410"):
+def read_allsport_cg(q: Queue, port: str = COM_PORT):
     loop = asyncio.get_event_loop()
-    return serial_asyncio.create_serial_connection(
-        loop, lambda: Output(q), port
-    )
+    print(port)
+    if port:
+        return serial_asyncio.create_serial_connection(loop, lambda: Output(q), port)
+    else:
+        logger.info("COM Port not provided - defaulting to mock AllSport")
+        return mock_allsport_cg(q)
+
 
 @producer(debug_only=True)
 async def mock_allsport_cg(q: Queue):
@@ -63,10 +69,11 @@ async def mock_allsport_cg(q: Queue):
     while True:
         duration -= 1
         shot_clock -= 1
-        if duration <= 0: 
+        if duration <= 0:
             duration = 10
             await q.async_q.put({"period": next(periods)})
-        if shot_clock <= 0: shot_clock = 30
+        if shot_clock <= 0:
+            shot_clock = 30
         min, sec = duration // 60, duration % 60
         time = f"{min}:{sec:02}"
         x = random.random()
@@ -74,11 +81,6 @@ async def mock_allsport_cg(q: Queue):
             home += 2
         elif x < 0.2:
             away += 2
-        payload = dict(
-            homeScore=home,
-            awayScore=away,
-            clock=time,
-            shotClock=shot_clock
-        )
+        payload = dict(homeScore=home, awayScore=away, clock=time, shotClock=shot_clock)
         await q.async_q.put(payload)
         await asyncio.sleep(1)

@@ -1,6 +1,10 @@
 const liveTextObjects = {};
 let alpineInit = false;
-let cache = {};
+let cache = {
+    "homePlayer": {"uni": "", "pos": "", "normalName": ""},
+    "awayPlayer": {"uni": "", "pos": "", "normalName": ""},
+    "stats": {teams: {H: [], V: []}}
+};
 
 document.addEventListener('alpine:init', () => {
     Alpine.store('sock', {
@@ -10,8 +14,12 @@ document.addEventListener('alpine:init', () => {
         },
         getHomePlayer(name) {
             return this.data.stats.teams.H.find(p => p.name == name)
+        },
+        getAwayPlayer(name) {
+            return this.data.stats.teams.V.find(p => p.name == name)
         }
     })
+    Alpine.magic('sock', (el, { Alpine }) => Alpine.store('sock').data)
     alpineInit = true;
 })
 

@@ -26,13 +26,16 @@ def get_items(url):
 
 def get_ident(url):
     rv = list()
-    soup = get(url)
+    try:
+        soup = get(url)
+    except requests.exceptions.MissingSchema:
+        soup = get(CONF_ROOT + url.lstrip("/"))
     color = soup.find("div", {"class": "colorblock"})
     hexc = color.decode_contents().split("<br/>")[2]
     name = soup.title.string.split(" Color Codes")[0].split(" Colors")[0]
     wiki = wikipedia.page(name)
-    image = wiki.images[-2]
-    return (hexc[11:-1], image)
+    image = [x for x in wiki.images if "icon_edit" not in x and "logo" in x][-1]
+    return (hexc[11:-1].lstrip(), image, name)
 
 
 def main():

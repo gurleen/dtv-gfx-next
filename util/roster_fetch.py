@@ -15,14 +15,18 @@ def get_players(url):
     for p in players:
         ident = p.find("div", {"class": "sidearm-roster-player-name"})
         name = ident.find("a").text.strip()
-        num = ident.find("span", {"class": "sidearm-roster-player-jersey-number"}).text.strip()
+        num = ident.find(
+            "span", {"class": "sidearm-roster-player-jersey-number"}
+        ).text.strip()
         pos = p.find("span", {"class": "sidearm-roster-player-position-long-short"})
         if pos is None:
-            pos = p.find("div", {"class": "sidearm-roster-player-position"}).find("span", {"class": "text-bold"})
+            pos = p.find("div", {"class": "sidearm-roster-player-position"}).find(
+                "span", {"class": "text-bold"}
+            )
         pos = pos.text.strip()
         img = p.find("img")["data-src"]
         img_url = urljoin(f"https://{hostname}", urlparse(img).path)
-        print(name, num, pos, img_url)
+        print(img_url)
 
 
-get_players("https://drexeldragons.com/sports/womens-soccer/roster")
+get_players("https://goexplorers.com/sports/womens-basketball/roster")

@@ -1,0 +1,92 @@
+#app {
+	height: 720px;
+	width: 1280px;
+	color: white;
+	display: flex;
+	justify-content: center;
+}
+
+.container {
+	height: 120px;
+	width: 860px;
+	position: relative;
+	top: 80%;
+	background-color: black;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	font-family: "Open Sans"
+}
+
+.teamBox {
+	width: 430px;
+	height: 75px;
+	display: flex;
+	align-items: center;
+	color: white;
+	line-height: 170%;
+}
+
+.teamImg {
+	height: 90%;
+	width: auto;
+	padding: 10px;
+}
+
+#homeBox { 
+	justify-content: flex-start; 
+	text-align: left;
+}
+#awayBox { 
+	justify-content: flex-end;
+	text-align: right;
+}
+
+.scoreBox {
+	height: 75px;
+	width: 75px;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 50px;
+	font-weight: 600;
+}
+
+#homeScore { margin-left: auto; }
+#awayScore { margin-right: auto; }
+
+.topLine {
+	font-size: 25px;
+	font-weight: 600;
+}
+
+.bottomLine {
+	font-size: 30px;
+	font-weight: 700;
+}
+
+.periodText {
+	color: white;
+	font-size: 25px;
+	font-weight: 600;
+	position: relative;
+	left: 10px;
+}
+
+.sponsorImg {
+	position: relative;
+	right: 5px;
+	height: 25%;
+	width: auto;
+}
+
+#currentReadBox {
+	background-color: #131313;
+	padding: 10px;
+}
+
+.currentReadImg {
+	height: 120px;
+	width: auto;
+}

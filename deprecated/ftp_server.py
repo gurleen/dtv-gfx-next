@@ -9,7 +9,6 @@ from janus import Queue
 
 
 class MyHandler(FTPHandler):
-
     def on_connect(self):
         print("%s:%s connected" % (self.remote_ip, self.remote_port))
 
@@ -20,7 +19,6 @@ class MyHandler(FTPHandler):
     def on_login(self, username):
         # do something when user login
         pass
-    
 
     def on_logout(self, username):
         # do something when user logs out
@@ -44,18 +42,19 @@ class MyHandler(FTPHandler):
     def on_incomplete_file_received(self, file):
         # remove partially uploaded files
         import os
+
         os.remove(file)
 
 
 def _run_ftp_server_sync(queue):
     authorizer = DummyAuthorizer()
-    authorizer.add_user('drexel', 'dragons', homedir='.', perm='elradfmwMT')
-    authorizer.add_anonymous(homedir='.')
+    authorizer.add_user("drexel", "dragons", homedir=".", perm="elradfmwMT")
+    authorizer.add_anonymous(homedir=".")
 
     handler = MyHandler
     handler.queue = queue
     handler.authorizer = authorizer
-    server = FTPServer(('', 21), handler)
+    server = FTPServer(("", 21), handler)
     server.serve_forever()
 
 
@@ -63,5 +62,4 @@ async def run_ftp_server(queue):
     loop = asyncio.get_running_loop()
 
     with concurrent.futures.ThreadPoolExecutor() as pool:
-        result = await loop.run_in_executor(
-            pool, _run_ftp_server_sync, queue)
+        result = await loop.run_in_executor(pool, _run_ftp_server_sync, queue)

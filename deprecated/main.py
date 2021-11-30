@@ -75,7 +75,7 @@ def config_window():
         [sg.Combo([], enable_events=True, key="-TEAMS-", expand_x=True)],
         [sg.Text("Select AllSport CG Port")],
         [sg.Combo(ports, key="-SERIAL-")],
-        [sg.Button("OK")]
+        [sg.Button("OK")],
     ]
     window = sg.Window("DragonsTV Graphics", layout)
     while True:

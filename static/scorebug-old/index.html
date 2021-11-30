@@ -14,6 +14,7 @@
     integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
     crossorigin="anonymous"></script>
   <script src="../components/livetext.js"></script>
+  <script src="../components/image.js"></script>
 </head>
 
 <body class="root">
@@ -30,6 +31,9 @@
     <div class="scoreArea anim2 awayColorDarker" id="awayScoreArea">
       <live-text key="awayScore" fade="true" class="score" id="awayScore">0</live-text>
     </div>
+
+    
+
     <div class="infoArea anim2">
       <live-text key="period" id="period"></live-text>
       <live-text key="clock" id="clock"></live-text>
@@ -38,61 +42,60 @@
       <live-text key="shotClock" id="shotClock"></live-text>
     </div>
 
-    <div class="timeouts">
-      <div class="singleTimeout" id="homeTO1"></div>
-      <div class="singleTimeout" id="homeTO2"></div>
-      <div class="singleTimeout" id="homeTO3"></div>
-      <div class="singleTimeout" id="homeTO4"></div>
+    <img class="sponsorLogo anim2" src="IBX.jpg">
+
+    <div x-data class="timeouts">
+      <div x-bind:class="$store.sock.data.homeTO >= 4? 'hiddenTO' : ''" class="singleTimeout" id="homeTO1"></div>
+      <div x-bind:class="$store.sock.data.homeTO >= 3? 'hiddenTO' : ''" class="singleTimeout" id="homeTO2"></div>
+      <div x-bind:class="$store.sock.data.homeTO >= 2? 'hiddenTO' : ''" class="singleTimeout" id="homeTO3"></div>
+      <div x-bind:class="$store.sock.data.homeTO >= 1? 'hiddenTO' : ''" class="singleTimeout" id="homeTO4"></div>
     </div>
 
     <div class="spacer"></div>
 
-    <div class="timeouts">
-      <div class="singleTimeout" id="awayTO1"></div>
-      <div class="singleTimeout" id="awayTO2"></div>
-      <div class="singleTimeout" id="awayTO3"></div>
-      <div class="singleTimeout" id="awayTO4"></div>
+    <div x-data class="timeouts">
+      <div x-bind:class="$store.sock.data.awayTO >= 4? 'hiddenTO' : ''" class="singleTimeout" id="awayTO1"></div>
+      <div x-bind:class="$store.sock.data.awayTO >= 3? 'hiddenTO' : ''" class="singleTimeout" id="awayTO2"></div>
+      <div x-bind:class="$store.sock.data.awayTO >= 2? 'hiddenTO' : ''" class="singleTimeout" id="awayTO3"></div>
+      <div x-bind:class="$store.sock.data.awayTO >= 1? 'hiddenTO' : ''" class="singleTimeout" id="awayTO4"></div>
     </div>
   </div>
 
-  <div class="slider" id="slider1">
+  <div x-data class="slider" id="slider1">
     <live-text key="compStatName" class="sliderTitleBox" id="slider1Anim2">
     </live-text>
-    <div class="sliderContentArea sliderAnim2">
-      <strong>{{ homeName }}</strong>  {{ compStat.homeStat }}   <strong>{{ awayName }}</strong>  {{ compStat.awayStat }}
+    <div class="sliderContentArea sliderAnim2" x-html="$sock.compStatText">
     </div>
   </div>
 
   <div class="slider" id="slider2">
     <div class="sliderTitleBox" id="slider2Anim2">
-      {{ textSlider.title }}
+      <live-text key="textSliderTitle" fade="true"></live-text>
     </div>
-    <div class="sliderContentArea slider2Anim2">
-      {{ textSlider.subtitle }}
-    </div>
+    <live-text key="textSliderSubtitle" fade="true" class="sliderContentArea slider2Anim2"></live-text>
   </div>
 
-  <div class="slider" id="homeLthSlider">
+  <div x-data class="slider" id="homeLthSlider">
     <div class="sliderTitleBoxAlt homeColor" id="slider3Anim2">
-      <img v-bind:src="homeImg" class="lthImg">
+      <img :src="$sock.homeImage" class="lthImg">
       <div class="numPosBox" v-bind:style="homeSecondary">
-        {{ homeLth.num }} <span id="divide"></span> {{ homeLth.pos }}
+        <span x-text="$sock.homePlayer.uni"></span> <span id="divide"></span> <span x-text="$sock.homePlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider3Anim2">
-      <strong>{{ homeLth.name }}</strong>&emsp;{{ homeLth.stat }}
+      <strong><span x-text="$sock.homePlayer.normalName"></span></strong>&emsp;<span x-text="$sock.homePlayer.stat"></span>
     </div>
   </div>
 
-  <div class="slider" id="awayLthSlider">
+  <div x-data class="slider" id="awayLthSlider">
     <div class="sliderTitleBoxAlt awayColor" id="slider4Anim2">
-      <img v-bind:src="awayImg" class="lthImg">
+      <img :src="$sock.awayImage" class="lthImg">
       <div class="numPosBox" v-bind:style="awaySecondary">
-        {{ awayLth.num }} <span id="divide"></span> {{ awayLth.pos }}
+        <span x-text="$sock.awayPlayer.uni"></span> <span id="divide"></span> <span x-text="$sock.awayPlayer.pos.toUpperCase()"></span>
       </div>
     </div>
     <div class="sliderContentArea" id="slider4Anim2">
-      <strong>{{ awayLth.name }}</strong>&emsp;{{ awayLth.stat }}
+      <strong><span x-text="$sock.awayPlayer.name"></span></strong>&emsp;<span x-text="$sock.awayPlayer.stat"></span>
     </div>
   </div>
   
@@ -102,15 +105,10 @@
   // SCOREBUG ANIMATION
 	var tl = gsap.timeline({paused: true, onComplete: () => {this.tl.seek(0); this.tl.pause()}})
 	tl.from(".anim1", {duration: .75, scaleX: 0, transformOrigin: "left", ease: "power4.inOut"})
-	tl.from(".anim2", {duration: .5, y: 20, opacity: 0, stagger: 0.1}, "-=.5")
+	tl.from(".anim2", {duration: .5, y: 20, opacity: 0, stagger: 0.03}, "-=.5")
 	tl.addPause(1.5)
 	tl.to("#scorebug", {duration: .2, opacity: 0})
 	tl.reverse()
-
-  socket.on("state-update", (payload) => {
-      console.log(payload)
-      if ("scoreboard:toggle" in payload) { tl.play() }
-  })
 	
 	// SLIDER ANIMATION
 	var slider1Tl = gsap.timeline()
@@ -133,6 +131,15 @@
 	awayLthTl.from("#awayLthSlider", {duration: .5, y: 36, opacity: 0, ease: "power4.inOut"})
 		.from('#slider4Anim2', {duration: .7, x: 10, opacity: 0, ease: "power4.inOut"}, "-=.5")
 	awayLthTl.reverse()
+
+  socket.on("state-update", (payload) => {
+    console.log(payload)
+    if ("scoreboard:toggle" in payload) { tl.play() }
+    if ("scoreboard:toggle-comp" in payload ) { console.log("here"); !slider1Tl.reversed()? slider1Tl.reverse() : slider1Tl.play() }
+    if ("scoreboard:toggle-text" in payload ) { !slider2Tl.reversed()? slider2Tl.reverse() : slider2Tl.play() }
+    if ("scoreboard:toggle-home" in payload ) { !homeLthTl.reversed()? homeLthTl.reverse() : homeLthTl.play() }
+    if ("scoreboard:toggle-away" in payload ) { !awayLthTl.reversed()? awayLthTl.reverse() : awayLthTl.play() }
+  })
 </script>
 
 </html>

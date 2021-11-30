@@ -6,7 +6,7 @@ dtv-gfx-next is the graphics playout software powering [Drexel Dragons](https://
 ## Usage
 ```bash
 pip install -r requirements.txt
-python3 main.py
+python3 app.py
 ```
 
 All files located in `/static` will be served at https://localhost:8080/.

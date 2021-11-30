@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DTV Billboard</title>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="/styles">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.2/gsap.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.4.2/dist/cdn.min.js"></script>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+    integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+    crossorigin="anonymous"></script>
+    <script src="../components/livetext.js"></script>
+</head>
+<body>
+
+<div x-data class="container" id="anim0">
+    <div class="teamBox homeColor" id="homeBox">
+        <img id="homeImg" class="teamImg anim1" :src="$store.sock.data.homeImg">
+        <div class="anim1">
+            <span class="topLine" x-text="$store.sock.data.homeName"></span><br>
+            <span class="bottomLine" x-text="$store.sock.data.homeTeamName"></span>
+        </div>
+        <div class="scoreBox anim1 homeColorDarker" id="homeScore" x-text="$store.sock.data.homeScore">
+        </div>
+    </div>
+    <div class="teamBox awayColor" id="awayBox">
+        <div class="scoreBox anim1r awayColorDarker" id="awayScore" x-text="$store.sock.data.awayScore">
+        </div>
+        <div class="anim1r">
+            <span class="topLine" x-text="$store.sock.data.awayName"></span><br>
+            <span class="bottomLine" x-text="$store.sock.data.awayTeamName"></span>
+        </div>
+        <img id="awayImg" class="teamImg anim2" :src="$store.sock.data.awayImg">
+    </div>
+    <div class="periodText anim2" id="period" x-text="$store.sock.data.period">
+    </div>
+</div>
+
+<script type="text/javascript">
+
+	var tl = gsap.timeline({paused: true, onComplete: () => {this.tl.seek(0); this.tl.pause()}})
+	tl.from("#anim0", {duration: 0.75, scaleX: 0, ease: "power4.inOut"})
+	  .from('.anim1', {duration: 0.75, x: -10, opacity: 0, ease: "power4.inOut"}, "-=0.5")
+	  .from('.anim1r', {duration: 0.75, x: 10, opacity: 0, ease: "power4.inOut"}, "-=.75")
+	  .from('.anim2', {duration: 0.75, opacity: 0, ease: "power4.inOut"}, "-=0.5")
+	  .addPause(1.5)
+	  .to("#anim0", {duration: .2, opacity: 0})
+
+	tl.reverse()
+
+    /*
+	var sponsorTl = gsap.timeline()
+	sponsorTl.from('#currentReadBox', {duration: 0.75, x: 50, opacity: 0, ease: "power4.inOut"})
+	sponsorTl.reverse()
+    */
+	// nodecg.listenFor('billboardSponsor', (msg) => sponsorTl.reversed()? sponsorTl.play() : sponsorTl.reverse())
+
+    socket.on("state-update", (payload) => {
+        console.log(payload)
+        if ("scoretobreak:toggle" in payload) { tl.play() }
+    })
+</script>
+
+</body>
+</html>

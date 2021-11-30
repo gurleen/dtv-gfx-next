@@ -13,6 +13,7 @@ if getattr("sys", "frozen", False):
 else:
     app_path = Path(os.path.dirname(os.path.abspath(__file__))).parent
 
+
 @producer
 async def read_from_config(q: Queue):
     logger.info("Loading CONFIG file...")

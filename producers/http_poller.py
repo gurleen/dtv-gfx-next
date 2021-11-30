@@ -6,9 +6,9 @@ from janus import Queue
 from producers.parse_xml import parse
 from producers.decorator import producer
 
-URL = "http://192.155.88.183:8000/sogame.xml"
+URL = "http://192.155.88.183:8000/2.xml"
 
-@producer
+
 async def poll_stats(q: Queue):
     logger.info(f"Pulling StatCrew XML from {URL}.")
     loop = asyncio.get_event_loop()
