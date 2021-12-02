@@ -1,9 +1,11 @@
-import sys
 import json
 import asyncio
 from loguru import logger
+from janus import Queue
 from first import first
-from pprint import pprint
+from typing import Mapping
+
+from producers.decorator import producer
 
 
 CONN_PARAMS = {
@@ -20,15 +22,15 @@ plays = list()
 computed = dict()
 
 
-def is_scoring_play(action):
+def is_scoring_play(action: Mapping) -> bool:
     return action["actionType"] in SCORING_PLAYS and action["success"] == 1
 
 
-def is_team(action, team):
+def is_team(action: Mapping, team: int) -> bool:
     return action.get("teamNumber") == team
 
 
-def determine_sides(message):
+def determine_sides(message: Mapping) -> None:
     global HOME, AWAY
     for team in message["teams"]:
         if team["detail"]["isHomeCompetitor"] == 1:
@@ -37,25 +39,31 @@ def determine_sides(message):
             AWAY = team["teamNumber"]
 
 
-async def compute_stats():
+async def compute_stats(q: Queue):
     computed["last_home_score"] = first(
         reversed(plays), key=lambda x: is_team(x, HOME) and is_scoring_play(x)
     )
     computed["last_away_score"] = first(
         reversed(plays), key=lambda x: is_team(x, AWAY) and is_scoring_play(x)
     )
+    await q.async_q.put(computed)
 
 
-async def updated_computed(action):
+async def updated_computed(action: Mapping, q: Queue):
     if is_scoring_play(action):
         side = "home" if action["teamNumber"] == HOME else "away"
-        computed[f"last_{side}_score"] = action
+        key = f"last_{side}_score"
+        computed[key] = action
+        await q.async_q.put({key: action})
 
 
-async def listen_to_nls(q):
+@producer(debug_only=True)
+async def listen_to_nls(q: Queue):
+    return
+    logger.info("Initializing LiveStats watcher.")
     global plays
-    loop = asyncio.get_event_loop()
-    reader, writer = await asyncio.open_connection("localhost", 7677)
+    reader, writer = await asyncio.open_connection("192.168.1.161", 7677)
+    logger.info("Connected to NCAA LiveStats.")
 
     writer.write(json.dumps(CONN_PARAMS).encode())
     await writer.drain()
@@ -69,19 +77,18 @@ async def listen_to_nls(q):
             store[message_type] = message_json
             if message_type == "teams":
                 determine_sides(message_json)
-                await q.put(message_json)
+                await q.async_q.put(message_json)
+                await q.async_q.put({"homeKey": HOME})
+                await q.async_q.put({"awayKey": AWAY})
                 logger.info(f"Home is {HOME} and away is {AWAY}")
+            else:
+                await q.async_q.put({"boxscore": message_json})
         elif message_type == "playbyplay":
             plays = message_json["actions"]
-            await compute_stats()
-            pprint(computed)
+            await compute_stats(q)
         elif message_type == "action":
             plays.append(message_json)
-            await updated_computed(message_json)
-            pprint(plays[-1])
-
-        if message_type != "ping":
-            logger.debug(f"Recieved a {message_type} message.")
+            await updated_computed(message_json, q)
 
 
 if __name__ == "__main__":

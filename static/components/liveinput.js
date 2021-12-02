@@ -22,7 +22,7 @@ class LiveInput extends HTMLElement {
         button.setAttribute('type', 'submit');
         button.innerText = "Submit"
         button.onclick = () => {
-            socket.emit("set-key", { key: this.key, value: this.input.value, type: `${this.type}-update` });
+            socket.emit("update-key", this.key, this.input.value);
         };
 
         wrapper.appendChild(label);

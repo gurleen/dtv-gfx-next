@@ -1,4 +1,6 @@
 import functools
+from . import *
+import producers
 
 
 producer_funcs = []

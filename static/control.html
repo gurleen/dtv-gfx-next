@@ -107,6 +107,11 @@
             }
         }
     }
+
+    window.incDec = function(key, amount) {
+        let curr = Alpine.store('sock').data[key]
+        updateKey(key, curr + amount)
+    }
 </script>
 
 <body class="pure-g">
@@ -118,11 +123,21 @@
         <toggle-button class="pure-u-1-2" key="scoreboard:toggle-away">Toggle Away Slider</toggle-button>
     </div>
     <live-input class="pure-u-1-6" key="period"></live-input>
+    <div class="pure-u-1-6 pure-g">
+        <p>Home Timeouts</p>
+        <button @click="incDec('homeTO', -1)">-1</button>
+        <button @click="incDec('homeTO', 1)">+1</button>
+    </div>
+    <div class="pure-u-1-6 pure-g">
+        <p>Away Timeouts</p>
+        <button @click="incDec('awayTO', -1)">-1</button>
+        <button @click="incDec('awayTO', 1)">+1</button>
+    </div>
     <toggle-button class="pure-u-1-6" key="scoretobreak:toggle">Toggle Big Scoreboard</toggle-button>
 
     <div x-data="playerSelect('homePlayer', 'H')" class="pure-u-1-5">
         <select x-model="selected">
-            <template x-for="(player, idx) in $sock.stats.teams.H">
+            <template x-for="(player, idx) in $sock.">
                 <option :value="idx" x-text="player.name"></option>
             </template>
         </select>

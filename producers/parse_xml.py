@@ -24,6 +24,7 @@ Play = namedtuple(
     defaults=[None] * 10,
 )
 
+
 def next_with(iterator, key, value):
     for i, x in enumerate(iterator):
         if getattr(x, key) == value:
@@ -50,9 +51,12 @@ def parse_old(raw_xml: str):
 
     return plays
 
+
 def parse(raw_xml: str):
     root = ET.fromstring(raw_xml)
-    officals = [x.attrib["text"].replace(", ", ",").split(",") for x in root.iter("officials")]
+    officals = [
+        x.attrib["text"].replace(", ", ",").split(",") for x in root.iter("officials")
+    ]
     plays = [x.attrib for x in root.iter("play")]
     box = {}
     teams = {}

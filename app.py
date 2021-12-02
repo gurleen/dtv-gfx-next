@@ -10,6 +10,7 @@ from distutils.util import strtobool
 
 import producers
 from producers.http_poller import poll_stats
+from producers.livestats import listen_to_nls
 from util.colors import colorscale
 from util.config_menu import config_window
 import global_vars
@@ -91,7 +92,7 @@ def setup_services(loop):
 
     site = web.TCPSite(runner)
     loop.run_until_complete(site.start())
-    
+
 
 async def rerun_on_exception(coro, *args, **kwargs):
     while True:
@@ -118,13 +119,13 @@ def main():
         logger.info("RUNNING IN DEBUG MODE")
 
     loop = asyncio.get_event_loop()
-    print("DATA:", data)
     queue = loop.run_until_complete(create_queue(data))
     prods = producers.collect_producers()
     setup_services(loop)
 
     loop.create_task(consumer(queue))
     loop.create_task(rerun_on_exception(poll_stats, queue))
+    # loop.create_task(listen_to_nls(queue))
 
     logger.info("Initializing producers...")
 
@@ -136,7 +137,6 @@ def main():
                 (not debug_only and not prod_only),
             )
         )
-
         if should_run:
             loop.create_task(producer(queue))
 

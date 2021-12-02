@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <title>DTV Config</title>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+        integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+        crossorigin="anonymous"></script>
+    <script defer src="./app.js"></script>
+</head>
+
+<style>
+    .app {
+        display: flex;
+    }
+
+    .box {
+        display: flex;
+        border: 1px solid black;
+    }
+</style>
+
+<body>
+    <div class="app">
+        <div class="box">
+            <TextInput key="period"></TextInput>
+        </div>
+    </div>
+</body>
+
+</html>
