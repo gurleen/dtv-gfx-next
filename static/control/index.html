@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <title>DTV Config</title>
     <meta charset="utf-8">
@@ -9,25 +8,122 @@
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
     <script defer src="./app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 <style>
     .app {
         display: flex;
+        flex-wrap: wrap;
+        font-family: 'Roboto', sans-serif;
     }
 
     .box {
         display: flex;
         border: 1px solid black;
+        margin: 5px;
+        padding: 10px;
+    }
+    
+    .col {
+        flex-direction: column;
+    }
+
+    button, input {
+        padding: 10px;
+        margin: 5px;
+    }
+
+    .alert {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        padding: 10px;
     }
 </style>
 
 <body>
     <div class="app">
-        <div class="box">
-            <TextInput key="period"></TextInput>
+        <div class="box col">
+            <text-input inp-key="period" value="1st"></text-input>
+            <p><b>Clock:</b> {{ lt.clock }} - {{ lt.shotClock }}</p>
+            <p>{{ lt.homeName }}: {{ lt.homeScore }}</p>
+            <p>{{ lt.awayName }}: {{ lt.awayScore }}</p>
+            <div v-if="lt.mediaTimeout" class="alert">
+                MEDIA TIMEOUT!
+            </div>
+        </div>
+
+        <div class="box col">
+            <toggle-button toggle-key="scoreboard:toggle" name="Scoreboard"></toggle-button>
+            <toggle-button toggle-key="scoreboard:toggle-comp" name="Comparison Stat"></toggle-button>
+            <toggle-button toggle-key="scoreboard:toggle-text" name="Text Slider"></toggle-button>
+            <toggle-button toggle-key="scoreboard:toggle-home" name="Home Slider"></toggle-button>
+            <toggle-button toggle-key="scoreboard:toggle-away" name="Away Slider"></toggle-button>
+        </div>
+
+        <div class="box col">
+            <div>
+                <p>Home TOs: {{ lt.homeTO }}</p>
+                <button v-on:click="inc('homeTO', -1)">-1</button>
+                <button v-on:click="inc('homeTO', 1)">+1</button>
+            </div>
+            <div>
+                <p>Away TOs: {{ lt.awayTO }}</p>
+                <button v-on:click="inc('awayTO', -1)">-1</button>
+                <button v-on:click="inc('awayTO', 1)">+1</button>
+            </div>
+        </div>
+
+        <div class="box col">
+            <select v-model="homePlayer">
+                <option v-for="(player, index) in lt.stats.teams.H" v-bind:value="index">
+                    {{ player.uni }} {{ player.name }}
+                </option>
+            </select>
+            <button v-on:click="uk('homePlayerNum', homePlayer)">Update Home Player</button>
+
+            <select v-model="awayPlayer">
+                <option v-for="(player, index) in lt.stats.teams.V" v-bind:value="index">
+                    {{ player.uni }} {{ player.name }}
+                </option>
+            </select>
+            <button v-on:click="uk('awayPlayerNum', awayPlayer)">Update Away Player</button>
+        </div>
+
+        <div class="box col">
+            <select v-model="compStat">
+                <option v-for="stat in compStatNames">
+                    {{ stat }}
+                </option>
+            </select>
+            <button v-on:click="uk('compStatName', compStat)">Update Comp Stat</button>
+        </div>
+
+        <div class="box col" style="width: 15em;">
+            <select v-model="selectedDefault">
+                <option v-for="def in textSliderDefaults" v-bind:value="def">
+                    {{ def.title }}
+                </option>
+            </select>
+            <button v-on:click="usePreset">Use Preset</button>
+            <div>
+                <p>Title</p>
+                <input v-model="textSliderTitle">
+            </div>
+            <div>
+                <p>Subtitle</p>
+                <input v-model="textSliderSubtitle">
+            </div>
+            <button v-on:click="updateSlider">Update Text Slider</button>
+        </div>
+
+        <div class="box col">
+            <button v-on:click="dskUpdate(0)">CLEAR GRAPHICS</button>
+            <button v-on:click="dskUpdate(1)">TAKE GRAPHICS</button>
         </div>
     </div>
 </body>
-
 </html>

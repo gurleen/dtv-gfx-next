@@ -5,8 +5,9 @@ from janus import Queue
 
 from producers.parse_xml import parse
 from producers.decorator import producer
+from util.store import store
 
-URL = "http://192.155.88.183:8000/2.xml"
+URL = "http://192.155.88.183:8000/9.xml"
 
 
 async def poll_stats(q: Queue):
@@ -22,6 +23,7 @@ async def poll_stats(q: Queue):
                     data = await loop.run_in_executor(None, parse, raw_xml)
                     if data != data_cache:
                         await q.async_q.put({"stats": data})
+                        store["stats"] = data
                         data_cache = data
                     cache = raw_xml
             await asyncio.sleep(1)

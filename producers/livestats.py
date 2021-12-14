@@ -1,11 +1,16 @@
 import json
 import asyncio
+from pprint import pprint
 from loguru import logger
 from janus import Queue
 from first import first
 from typing import Mapping
 
-from producers.decorator import producer
+# from producers.decorator import producer
+from util.store import store
+
+
+READ_LIMIT = 2097152
 
 
 CONN_PARAMS = {
@@ -17,7 +22,7 @@ CONN_PARAMS = {
 SCORING_PLAYS = ("2pt", "3pt", "freethrow")
 
 HOME, AWAY = -1, -1
-store = dict()
+# store = dict()
 plays = list()
 computed = dict()
 
@@ -57,12 +62,21 @@ async def updated_computed(action: Mapping, q: Queue):
         await q.async_q.put({key: action})
 
 
-@producer(debug_only=True)
+async def process_action(action: Mapping, q: Queue):
+    pprint(action)
+    if action["actionType"] == "timeout" and action["subType"] == "commercial":
+        logger.info("***MEDIA TIMEOUT***")
+        await q.async_q.put({"mediaTimeout": True})
+    elif action["actionType"] == "clock" and action["subType"] == "start":
+        logger.info("MEDIA TIMEOUT OVER.")
+        await q.async_q.put({"mediaTimeout": False})
+
+
+# @producer(debug_only=True)
 async def listen_to_nls(q: Queue):
-    return
     logger.info("Initializing LiveStats watcher.")
     global plays
-    reader, writer = await asyncio.open_connection("192.168.1.161", 7677)
+    reader, writer = await asyncio.open_connection("192.168.1.161", 7677, limit=READ_LIMIT) 
     logger.info("Connected to NCAA LiveStats.")
 
     writer.write(json.dumps(CONN_PARAMS).encode())
@@ -88,8 +102,19 @@ async def listen_to_nls(q: Queue):
             await compute_stats(q)
         elif message_type == "action":
             plays.append(message_json)
+            await process_action(message_json, q)
             await updated_computed(message_json, q)
+        if message_type != "boxscore":
+            pprint(message_json)
+            pass
+        await asyncio.sleep(0.05)
+
+async def create_queue() -> Queue:
+    q = Queue()
+    return q
 
 
 if __name__ == "__main__":
-    asyncio.run(listen_to_nls())
+    loop = asyncio.get_event_loop()
+    q = loop.run_until_complete(create_queue())
+    asyncio.run(listen_to_nls(q))

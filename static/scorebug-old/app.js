@@ -8,9 +8,33 @@ const vue = new Vue({
     computed: {
         compStat: function () {
             if(this.lt.stats.box === undefined) return {}
-            return {
+            /*return {
                 home: this.lt.stats.box["H"][this.lt.compStatType],
                 away: this.lt.stats.box["V"][this.lt.compStatType]
+            }*/
+            let H = this.lt.stats.box["H"]
+            let V = this.lt.stats.box["V"]
+            switch(this.lt.compStatName) {
+                case 'Field Goals':
+                    return {home: `${H.fgm}/${H.fga}`, away: `${V.fgm}/${V.fga}`}
+                case '3PT FG':
+                    return {home: `${H.fgm3}/${H.fga3}`, away: `${V.fgm3}/${V.fga3}`}
+                case 'Free Throws':
+                    return {home: `${H.ftm}/${H.fta}`, away: `${V.ftm}/${V.fta}`}
+                case 'Turnovers':
+                    return {home: H.to, away: V.to}
+                case 'Blocks':
+                    return {home: H.blk, away: V.blk}
+                case 'Steals':
+                    return {home: H.stl, away: V.stl}
+                case 'Rebounds':
+                    return {home: H.treb, away: V.treb}
+                case 'Off. Reb':
+                    return {home: H.oreb, away: V.oreb}
+                case 'Def. Reb':
+                    return {home: H.dreb, away: V.dreb}
+                default: 
+                    return {home: "", away: ""}
             }
         },
         awayLth: function () {

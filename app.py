@@ -13,11 +13,13 @@ from producers.http_poller import poll_stats
 from producers.livestats import listen_to_nls
 from util.colors import colorscale
 from util.config_menu import config_window
+from util.data_transform import process_control_data
 import global_vars
 
 
 cache = dict()
-queue = None
+queue: Queue = None
+control_queue: Queue = None
 
 
 DEBUG = strtobool(os.getenv("DEBUG", default="false"))
@@ -71,7 +73,15 @@ def get_key(sio, key):
 
 @sio.on("update-key")
 async def update_key(sio, key, value):
+    print(key, value)
     await queue.async_q.put({key: value})
+
+
+@sio.on("control-message")
+async def control_message(sio, key, value):
+    """Handle message from control panel."""
+    await control_queue.async_q.put({key: value})
+    
 
 
 @sio.event
@@ -106,7 +116,7 @@ async def rerun_on_exception(coro, *args, **kwargs):
 
 
 def main():
-    global queue
+    global queue, control_queue
     data = dict()
 
     if not DEBUG:
@@ -120,12 +130,14 @@ def main():
 
     loop = asyncio.get_event_loop()
     queue = loop.run_until_complete(create_queue(data))
+    control_queue = loop.run_until_complete(create_queue(data))
     prods = producers.collect_producers()
     setup_services(loop)
 
     loop.create_task(consumer(queue))
     loop.create_task(rerun_on_exception(poll_stats, queue))
-    # loop.create_task(listen_to_nls(queue))
+    loop.create_task(listen_to_nls(queue))
+    loop.create_task(process_control_data(control_queue))
 
     logger.info("Initializing producers...")
 
