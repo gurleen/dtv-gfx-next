@@ -41,6 +41,18 @@ Vue.component(`toggle-button`, {
     }
 })
 
+
+Vue.component('caspar-graphic', {
+    props: ["graphic"],
+    template: `<div>
+        <p>{{ graphic.name }}</p>
+        <button>⏯</button>
+        <button>⏹</button>
+    </div>`,
+    methods: {}
+})
+
+
 const vue = new Vue({
     el: ".app",
     data: {
@@ -55,7 +67,12 @@ const vue = new Vue({
         ],
         selectedDefault: {},
         textSliderTitle: "",
-        textSliderSubtitle: ""
+        textSliderSubtitle: "",
+        casparGraphics: [],
+        casparForm: {
+            name: "",
+            type: ""
+        }
     },
     async created() {
         this.lt = await (await fetch("/cache")).json()
@@ -83,6 +100,9 @@ const vue = new Vue({
         },
         dskUpdate(state) {
             fetch(`http://10.248.66.57/v1/shortcut?name=main_dsk1_value&value=${state}`)
+        },
+        addCasparGraphic() {
+            this.casparGraphics.push(this.casparForm)
         }
     }
 })

@@ -14,6 +14,10 @@
 </head>
 
 <style>
+    div {
+        display: flex;
+    }
+
     .app {
         display: flex;
         flex-wrap: wrap;
@@ -31,7 +35,11 @@
         flex-direction: column;
     }
 
-    button, input {
+    .row {
+        flex-direction: row;
+    }
+
+    button, input, select {
         padding: 10px;
         margin: 5px;
     }
@@ -123,6 +131,22 @@
         <div class="box col">
             <button v-on:click="dskUpdate(0)">CLEAR GRAPHICS</button>
             <button v-on:click="dskUpdate(1)">TAKE GRAPHICS</button>
+        </div>
+
+        <div class="box col">
+            <div>
+                <input v-model="casparForm.name" placeholder="Graphic Name">
+                <select v-model="casparForm.type">
+                    <option>Video</option>
+                    <option>Web Page</option>
+                </select>
+                <button v-on:click="addCasparGraphic">Add</button>
+            </div>
+            <div class="col">
+                <template v-for="gfx in casparGraphics">
+                    <caspar-graphic :graphic="gfx"></caspar-graphic>
+                </template>
+            </div>
         </div>
     </div>
 </body>

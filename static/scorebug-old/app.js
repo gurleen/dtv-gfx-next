@@ -3,7 +3,7 @@ const socket = io();
 const vue = new Vue({
     el: ".app",
     data: {
-        lt: {stats: {plays: [], teams: {H: [], V: []}}}
+        lt: {stats: {plays: [], teams: {H: [], V: []}}},
     },
     computed: {
         compStat: function () {
@@ -79,7 +79,7 @@ const vue = new Vue({
         })
         createAnimations()
         createToggleConnections(socket)
-        tl.play()
+        // tl.play()
     }
 });
 
@@ -95,4 +95,19 @@ function timeDelta(a, b) {
     let mins = Math.floor(diff / 60)
     let seconds = diff - (mins * 60)
     return `${mins}:${seconds}`
+}
+
+function play(input) {
+    console.log("play called")
+    console.log(input)
+    tl.play()
+}
+
+function next() {
+    console.log("next called")
+    tl.play()
+}
+
+function stop() {
+    console.log("stop called")
 }

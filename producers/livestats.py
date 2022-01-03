@@ -5,9 +5,11 @@ from loguru import logger
 from janus import Queue
 from first import first
 from typing import Mapping
+import socket
+from boltons.socketutils import BufferedSocket
 
 # from producers.decorator import producer
-from util.store import store
+# from util.store import store
 
 
 READ_LIMIT = 2097152
@@ -22,7 +24,7 @@ CONN_PARAMS = {
 SCORING_PLAYS = ("2pt", "3pt", "freethrow")
 
 HOME, AWAY = -1, -1
-# store = dict()
+store = dict()
 plays = list()
 computed = dict()
 
@@ -107,7 +109,24 @@ async def listen_to_nls(q: Queue):
         if message_type != "boxscore":
             pprint(message_json)
             pass
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.1)
+
+
+def listen_to_nls_sync(q: Queue):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    addr = ("192.168.1.161", 7677)
+    sock.connect(addr)
+    bufsock = BufferedSocket(sock, maxsize=READ_LIMIT)
+
+    bufsock.write(json.dumps(CONN_PARAMS).encode())
+    while True:
+        message = bufsock.recv_until(b"\r\n")
+        message_json = json.loads(message.decode("utf-8"))
+        message_type = message_json["type"]
+        pprint(message_json)
+
+
+
 
 async def create_queue() -> Queue:
     q = Queue()
@@ -117,4 +136,4 @@ async def create_queue() -> Queue:
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     q = loop.run_until_complete(create_queue())
-    asyncio.run(listen_to_nls(q))
+    listen_to_nls_sync(q)

@@ -10,14 +10,11 @@ from distutils.util import strtobool
 
 import producers
 from producers.http_poller import poll_stats
-from producers.livestats import listen_to_nls
+from producers.livestats import listen_to_nls_sync
 from util.colors import colorscale
-from util.config_menu import config_window
-from util.data_transform import process_control_data
-import global_vars
+from util.store import store
 
 
-cache = dict()
 queue: Queue = None
 control_queue: Queue = None
 
@@ -35,7 +32,7 @@ logger.add(sys.stderr, level=log_level)
 
 
 async def generate_styles(request):
-    colors = {k: v for k, v in cache.items() if "color" in k.lower()}
+    colors = {k: v for k, v in store.items() if "color" in k.lower()}
     rv = ""
     for k, c in colors.items():
         rv += f".{k} {{ background-color: {c}; }}\n"
@@ -44,43 +41,46 @@ async def generate_styles(request):
 
 
 async def get_full_cache(request):
-    return web.Response(text=json.dumps(cache), content_type="application/json")
+    return web.Response(text=json.dumps(store), content_type="application/json")
 
 
-sio = socketio.AsyncServer()
+async def invoke(request: web.Request):
+    text = await request.text()
+    for line in text.splitlines():
+        key, value = line.split("=")
+        if key == "toggleKey":
+            await queue.async_q.put({value: None})
+    return web.Response(text="OK")
+
+
+sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
-app.add_routes([web.get("/styles", generate_styles), web.get("/cache", get_full_cache)])
+app.add_routes([web.get("/styles", generate_styles), web.get("/cache", get_full_cache), web.post("/invoke", invoke)])
 app.router.add_static("/", os.path.join(app_path, "static"), show_index=True)
 
 
 async def consumer(queue: Queue):
     while True:
         message: dict = await queue.async_q.get()
-        cache.update(message)
+        store.update(message)
         await sio.emit("state-update", message)
 
 
 @sio.on("get-cache")
 def get_cache(sio):
-    return cache
+    return store
 
 
 @sio.on("get-key")
 def get_key(sio, key):
-    return cache.get(key)
+    return store.get(key)
 
 
 @sio.on("update-key")
 async def update_key(sio, key, value):
     print(key, value)
     await queue.async_q.put({key: value})
-
-
-@sio.on("control-message")
-async def control_message(sio, key, value):
-    """Handle message from control panel."""
-    await control_queue.async_q.put({key: value})
     
 
 
@@ -90,10 +90,8 @@ def connect(sid, environ, _):
     logger.info(f"Client at {ip} with sid {sid} connected.")
 
 
-async def create_queue(defaults: dict) -> Queue:
-    q = Queue()
-    await q.async_q.put(defaults)
-    return q
+async def create_queue() -> Queue:
+    return Queue()
 
 
 def setup_services(loop):
@@ -116,12 +114,7 @@ async def rerun_on_exception(coro, *args, **kwargs):
 
 
 def main():
-    global queue, control_queue
-    data = dict()
-
-    if not DEBUG:
-        data = config_window()
-        global_vars.COM_PORT = data["com_port"]
+    global queue
 
     logger.info("Welcome to dtv-gfx-next 🐉")
     logger.info("Go Dragons!")
@@ -129,15 +122,15 @@ def main():
         logger.info("RUNNING IN DEBUG MODE")
 
     loop = asyncio.get_event_loop()
-    queue = loop.run_until_complete(create_queue(data))
-    control_queue = loop.run_until_complete(create_queue(data))
+    queue = loop.run_until_complete(create_queue())
     prods = producers.collect_producers()
     setup_services(loop)
 
     loop.create_task(consumer(queue))
-    loop.create_task(rerun_on_exception(poll_stats, queue))
-    loop.create_task(listen_to_nls(queue))
-    loop.create_task(process_control_data(control_queue))
+    # loop.create_task(rerun_on_exception(poll_stats, queue))
+    # loop.create_task(listen_to_nls(queue))
+
+    # loop.run_in_executor(None, listen_to_nls_sync, queue)
 
     logger.info("Initializing producers...")
 
