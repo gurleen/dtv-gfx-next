@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <title>DTV Config</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.14/lottie.min.js"
+        integrity="sha512-G1R66RZMhyLDEcAu92/Kv4sWNypnEiJcM6yhe0PNyiYDaMAKpMrJ6ZLR67xC/RMNGRa8Pm9TxtO8a98F6Ct+Gw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div id="anim"></div>
+</body>
+
+<script>
+    var playing = false;
+
+    var animData = {
+        startFrame: 0,
+        endFrame: 135,
+        loopStartFrame: 74,
+        loopEndFrame: 77
+    }
+
+    var anim = bodymovin.loadAnimation({
+        container: document.getElementById('bm'),
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        path: 'data.json'
+    });
+
+    function play() {
+        if (playing) return;
+        anim.loop = true
+        anim.playSegments([[0, animData.loopStartFrame], [animData.loopStartFrame + 1, animData.loopEndFrame]])
+        playing = true;
+    }
+
+    function stop() {
+        if (!playing) return;
+        anim.loop = false
+        anim.playSegments([animData.loopEndFrame, animData.endFrame])
+        playing = false;
+    } var anim = bodymovin.loadAnimation({
+        container: document.getElementById('anim'),
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        path: 'data.json'
+    });
+</script>
+
+</html>

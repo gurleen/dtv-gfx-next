@@ -79,7 +79,7 @@ const vue = new Vue({
         })
         createAnimations()
         createToggleConnections(socket)
-        tl.play()
+        // tl.play()
     }
 });
 
