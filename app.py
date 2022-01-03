@@ -6,6 +6,9 @@ import socketio
 from janus import Queue
 from loguru import logger
 from aiohttp import web
+from amcp_pylib.core import Client
+from amcp_pylib.module.basic import LOADBG, PLAY, CLEAR
+from amcp_pylib.module.template import CG_ADD
 from distutils.util import strtobool
 
 import producers
@@ -53,6 +56,8 @@ async def invoke(request: web.Request):
     return web.Response(text="OK")
 
 
+caspar = Client()
+caspar.connect()
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
@@ -81,8 +86,32 @@ def get_key(sio, key):
 async def update_key(sio, key, value):
     print(key, value)
     await queue.async_q.put({key: value})
-    
 
+
+@sio.on("control-message")
+async def control_message(sio, key, value):
+    """Handle message from control panel."""
+    await control_queue.async_q.put({key: value})
+
+
+@sio.on("casparcg")
+async def casparcg(sio, action, item, layer):
+    """Handle CasparCG event."""
+    print("CASPARCG", action, item, layer)
+    if action == "LOAD AND PLAY":
+        caspar.send(LOADBG(channel=1, layer=layer, clip=item))
+        caspar.send(PLAY(video_channel=1, layer=layer, clip=item))
+        caspar.send(LOADBG(channel=1, layer=layer, clip="EMPTY", transition="MIX", duration= 20, auto="AUTO"))
+    elif action == "QUEUE":
+        caspar.send(LOADBG(channel=1, layer=layer, clip=item, auto="AUTO"))
+    elif action == "QUEUE BLANK":
+        caspar.send(LOADBG(channel=1, layer=layer, clip="EMPTY", transition="MIX", duration= 1, auto="AUTO"))
+    elif action == "CG ADD":
+        caspar.send(CG_ADD(video_channel=1, cg_layer=layer, template=item, play_on_load=1))
+    elif action == "BLANK":
+        caspar.send(CLEAR(video_channel=1))
+    elif action == "CLEAR":
+        caspar.send(CLEAR(video_channel=1, layer=layer))
 
 @sio.event
 def connect(sid, environ, _):
@@ -127,10 +156,9 @@ def main():
     setup_services(loop)
 
     loop.create_task(consumer(queue))
-    # loop.create_task(rerun_on_exception(poll_stats, queue))
+    loop.create_task(rerun_on_exception(poll_stats, queue))
     # loop.create_task(listen_to_nls(queue))
-
-    # loop.run_in_executor(None, listen_to_nls_sync, queue)
+    # loop.create_task(process_control_data(control_queue))
 
     logger.info("Initializing producers...")
 
