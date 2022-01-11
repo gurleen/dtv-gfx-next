@@ -23,12 +23,14 @@
   <div class="app">
     <div id="scorebug" class="container anim1">
       <div class="teamArea anim2" id="homeArea" style="background-color: rgb(0, 67, 123);">
+        <img :src="lt.homeImage" class="teamImg">
         <p class="teamName" id="homeName">{{ lt.homeName }}</p>
       </div>
       <div class="scoreArea anim2" id="homeScoreArea" style="background-color: rgb(0, 50, 92);">
         <p class="score" id="homeScore">{{ lt.homeScore }}</p>
       </div>
       <div class="teamArea anim2 awayColor" id="awayArea">
+        <img :src="lt.awayImage" class="teamImg">
         <p class="teamName" id="awayName">{{ lt.awayName }}</p>
       </div>
       <div class="scoreArea anim2 awayColorDarker" id="awayScoreArea">
@@ -98,6 +100,18 @@
       </div>
     </div>
 
+    <div x-data class="slider" id="homeInfoSlider">
+      <div class="sliderTitleBoxAlt homeColor" id="slider3Anim2">
+        <img :src="lt.homeImage" class="lthImg">
+        <div class="numPosBox">
+          <strong>{{ lt.homeName }}</strong>
+        </div>
+      </div>
+      <div class="sliderContentArea" id="slider3Anim2">
+        {{ lt.homeInfoSliderText }}
+      </div>
+    </div>
+
     <div x-data class="slider" id="awayLthSlider">
       <div class="sliderTitleBoxAlt awayColor" id="slider4Anim2">
         <img :src="lt.awayImage" class="lthImg">
@@ -112,20 +126,5 @@
   </div>
 
 </body>
-
-<script>
-  /*
-  socket.on("state-update", (payload) => {
-    console.log(payload)
-    if ("scoreboard:toggle" in payload) { tl.play() }
-    if ("scoreboard:toggle-comp" in payload ) { console.log("here"); !slider1Tl.reversed()? slider1Tl.reverse() : slider1Tl.play() }
-    if ("scoreboard:toggle-text" in payload ) { !slider2Tl.reversed()? slider2Tl.reverse() : slider2Tl.play() }
-    if ("scoreboard:toggle-home" in payload ) { !homeLthTl.reversed()? homeLthTl.reverse() : homeLthTl.play() }
-    if ("scoreboard:toggle-away" in payload ) { !awayLthTl.reversed()? awayLthTl.reverse() : awayLthTl.play() }
-  })
-  */
-
-
-</script>
 
 </html>

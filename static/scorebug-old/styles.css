@@ -25,6 +25,15 @@ html, body {
 .teamArea {
     height: 40px;
     width: 210px;
+    display: flex;
+    align-items: center;
+}
+
+.teamImg {
+    position: relative;
+    height: 85%;
+    width: auto;
+    left: 8px;
 }
 
 .teamName {
@@ -33,8 +42,7 @@ html, body {
     font-family: "Open Sans";
     font-weight: bolder;
     position: relative;
-    left: 30px;
-    top: -25%;
+    left: 20px;
 }
 
 .scoreArea {
