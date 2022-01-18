@@ -8,67 +8,80 @@ const vue = new Vue({
     computed: {
         compStat: function () {
             if(this.lt.stats.box === undefined) return {}
-            /*return {
-                home: this.lt.stats.box["H"][this.lt.compStatType],
-                away: this.lt.stats.box["V"][this.lt.compStatType]
-            }*/
-            let H = this.lt.stats.box["H"]
-            let V = this.lt.stats.box["V"]
+
+            let H = this.lt.boxscore["teams"][this.lt.homeKey - 1]["total"]["team"]
+            let V = this.lt.boxscore["teams"][this.lt.awayKey - 1]["total"]["team"]
             switch(this.lt.compStatName) {
                 case 'Field Goals':
-                    return {home: `${H.fgm}/${H.fga}`, away: `${V.fgm}/${V.fga}`}
+                    return {home: `${H.sTwoPointersMade}/${H.sTwoPointersAttempted}`, away: `${V.sTwoPointersMade}/${V.sTwoPointersAttempted}`}
                 case '3PT FG':
-                    return {home: `${H.fgm3}/${H.fga3}`, away: `${V.fgm3}/${V.fga3}`}
+                    return {home: `${H.sThreePointersMade}/${H.sThreePointersAttempted}`, away: `${V.sThreePointersMade}/${V.sThreePointersAttempted}`}
                 case 'Free Throws':
-                    return {home: `${H.ftm}/${H.fta}`, away: `${V.ftm}/${V.fta}`}
+                    return {home: `${H.sFreeThrowsMade}/${H.sFreeThrowsAttempted}`, away: `${V.sFreeThrowsMade}/${V.sFreeThrowsAttempted}`}
                 case 'Turnovers':
-                    return {home: H.to, away: V.to}
+                    return {home: H.sTurnovers, away: V.sTurnovers}
                 case 'Blocks':
-                    return {home: H.blk, away: V.blk}
+                    return {home: H.sBlocks, away: V.sBlocks}
                 case 'Steals':
-                    return {home: H.stl, away: V.stl}
+                    return {home: H.sSteals, away: V.sSteals}
                 case 'Rebounds':
-                    return {home: H.treb, away: V.treb}
+                    return {home: H.sReboundsTeam, away: V.sReboundsTeam}
                 case 'Off. Reb':
-                    return {home: H.oreb, away: V.oreb}
+                    return {home: H.sReboundsOffensive, away: V.sReboundsOffensive}
                 case 'Def. Reb':
-                    return {home: H.dreb, away: V.dreb}
+                    return {home: H.sReboundsDefensive, away: V.sReboundsDefensive}
                 default: 
                     return {home: "", away: ""}
             }
         },
         awayLth: function () {
-            let player = this.lt.stats.teams["V"][this.lt.awayPlayerNum]
-            if(player === undefined) return {}
-            let nameSplit = player.name.split(", ")
-            return {
-                name: `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase(),
-                stat: `${player.tp} PTS ${player.fgm}/${player.fga} FG ${player.ast} AST`,
-                num: player.uni,
-                pos: player.pos
+            try {
+                let pno = this.lt.awayPlayerNum
+                let player = this.lt.teams[this.lt.awayKey - 1].players.find(p => p.pno == pno)
+                let stats = this.lt.boxscore.teams[this.lt.awayKey - 1].total.players.find(p => p.pno == pno)
+                return {
+                    name: `${player.firstName} ${player.familyName}`.toUpperCase(),
+                    stat: `${stats.sPoints} PTS ${stats.sTwoPointersMade}/${stats.sTwoPointersAttempted} FG ${stats.sAssists} AST`,
+                    num: player.shirtNumber,
+                    pos: player.playingPosition[0]
+                }
+            } catch(err) {
+                return {}
             }
         },
         homeLth: function () {
-            let player = this.lt.stats.teams["H"][this.lt.homePlayerNum]
-            if(player === undefined) return {}
-            let nameSplit = player.name.split(", ")
-            return {
-                name: `${nameSplit[1]} ${nameSplit[0]}`.toUpperCase(),
-                stat: `${player.tp} PTS ${player.fgm}/${player.fga} FG ${player.ast} AST`,
-                num: player.uni,
-                pos: player.pos
+            try {
+                let pno = this.lt.homePlayerNum
+                let player = this.lt.teams[this.lt.homeKey - 1].players.find(p => p.pno == pno)
+                let stats = this.lt.boxscore.teams[this.lt.homeKey - 1].total.players.find(p => p.pno == pno)
+                return {
+                    name: `${player.firstName} ${player.familyName}`.toUpperCase(),
+                    stat: `${stats.sPoints} PTS ${stats.sTwoPointersMade}/${stats.sTwoPointersAttempted} FG ${stats.sAssists} AST`,
+                    num: player.shirtNumber,
+                    pos: player.playingPosition[0]
+                }
+            } catch(err) {
+                return {}
             }
         },
         awayScoringDrought: function () {
-            let lastScore = _.findLast(this.lt.stats.plays, play => play.vh == "V" && (SCORING_PLAYS.includes(play.type) && play.action == "GOOD"))
-            if(lastScore === undefined) return {}
-            return timeDelta(lastScore.time, this.lt.clock)
+            let lastScore = this.lt["last_away_score"]
+            if(lastScore == null) return ""
+            return timeDelta(lastScore.clock.slice(0, -3), this.lt.clock)
         },
         homeScoringDrought: function () {
-            let lastScore = _.findLast(this.lt.stats.plays, play => play.vh == "H" && (SCORING_PLAYS.includes(play.type) && play.action == "GOOD"))
-            if(lastScore === undefined) return {}
-            return timeDelta(lastScore.time, this.lt.clock)
+            let lastScore = this.lt["last_home_score"]
+            if(lastScore == null) return ""
+            return timeDelta(lastScore.clock.slice(0, -3), this.lt.clock)
         },
+        homeInfo: function () {
+            if(this.lt.homeInfoSliderText == "SCORING DROUGHT") return `SCORING DROUGHT ${this.homeScoringDrought}`
+            return this.lt.homeInfoSliderText
+        },
+        awayInfo: function () {
+            if(this.lt.awayInfoSliderText == "SCORING DROUGHT") return `SCORING DROUGHT ${this.awayScoringDrought}`
+            return this.lt.awayInfoSliderText
+        }
     },
     async created() {
         this.lt = await (await fetch("/cache")).json()
@@ -79,7 +92,7 @@ const vue = new Vue({
         })
         createAnimations()
         createToggleConnections(socket)
-        // tl.play()
+        tl.play()
     }
 });
 
@@ -100,12 +113,12 @@ function timeDelta(a, b) {
 function play(input) {
     console.log("play called")
     console.log(input)
-    tl.play()
 }
+
 
 function next() {
     console.log("next called")
-    tl.play()
+    // tl.play()
 }
 
 function stop() {

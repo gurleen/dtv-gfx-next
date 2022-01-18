@@ -30,14 +30,28 @@ function createAnimations() {
         .from('#slider4Anim2', { duration: .7, x: 10, opacity: 0, ease: "power4.inOut" }, "-=.5")
     awayLthTl.reverse()
     window.awayLthTl = awayLthTl
+
+    var homeInfoTl = gsap.timeline()
+    homeInfoTl.from("#homeInfoSlider", { duration: .5, y: 36, opacity: 0, ease: "power4.inOut" })
+        .from('#slider5Anim2', { duration: .7, x: 10, opacity: 0, ease: "power4.inOut" }, "-=.5")
+    homeInfoTl.reverse()
+    window.homeInfoTl = homeInfoTl
+
+    var awayInfoTl = gsap.timeline()
+    awayInfoTl.from("#awayInfoSlider", { duration: .5, y: 36, opacity: 0, ease: "power4.inOut" })
+        .from('#slider6Anim2', { duration: .7, x: 10, opacity: 0, ease: "power4.inOut" }, "-=.5")
+        awayInfoTl.reverse()
+    window.awayInfoTl = awayInfoTl
 }
 
 function createToggleConnections(socket) {
     socket.on("state-update", (payload) => {
         if ("scoreboard:toggle" in payload) { tl.play() }
-        if ("scoreboard:toggle-comp" in payload) { console.log("here"); !slider1Tl.reversed() ? slider1Tl.reverse() : slider1Tl.play() }
+        if ("scoreboard:toggle-comp" in payload) { !slider1Tl.reversed() ? slider1Tl.reverse() : slider1Tl.play() }
         if ("scoreboard:toggle-text" in payload) { !slider2Tl.reversed() ? slider2Tl.reverse() : slider2Tl.play() }
         if ("scoreboard:toggle-home" in payload) { !homeLthTl.reversed() ? homeLthTl.reverse() : homeLthTl.play() }
         if ("scoreboard:toggle-away" in payload) { !awayLthTl.reversed() ? awayLthTl.reverse() : awayLthTl.play() }
+        if ("scoreboard:toggle-home-info" in payload) { !homeInfoTl.reversed() ? homeInfoTl.reverse() : homeInfoTl.play() }
+        if ("scoreboard:toggle-away-info" in payload) { !awayInfoTl.reversed() ? awayInfoTl.reverse() : awayInfoTl.play() }
     })
 }

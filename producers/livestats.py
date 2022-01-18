@@ -27,6 +27,8 @@ HOME, AWAY = -1, -1
 store = dict()
 plays = list()
 computed = dict()
+numbers = dict(home={}, away={})    # shirt number => player index
+starters = dict(home=[], away=[])
 
 
 def is_scoring_play(action: Mapping) -> bool:
@@ -44,6 +46,25 @@ def determine_sides(message: Mapping) -> None:
             HOME = team["teamNumber"]
         else:
             AWAY = team["teamNumber"]
+
+
+def process_teams(message: dict, q: Queue):
+    global numbers, starters
+    for team in message["teams"]:
+        team_starters = []
+        side = "home" if team["teamNumber"] == HOME else "away"
+        for player in team["players"]:
+            print(player)
+            numbers[side][player["shirtNumber"]] = player["pno"]
+            if player["starter"] == 1:
+                team_starters.append(player)
+        starters[side] = team_starters
+    
+    q.sync_q.put({
+        "numbers": numbers,
+        "starters": starters
+    })
+
 
 
 def compute_stats(q: Queue):
@@ -74,47 +95,14 @@ def process_action(action: Mapping, q: Queue):
         q.sync_q.put({"mediaTimeout": False})
 
 
-# @producer(debug_only=True)
-async def listen_to_nls(q: Queue):
-    logger.info("Initializing LiveStats watcher.")
-    global plays
-    reader, writer = await asyncio.open_connection("192.168.1.161", 7677, limit=READ_LIMIT) 
-    logger.info("Connected to NCAA LiveStats.")
-
-    writer.write(json.dumps(CONN_PARAMS).encode())
-    await writer.drain()
-
-    while True:
-        message = await reader.readuntil(b"\r\n")
-        message_json = json.loads(message.decode("utf-8"))
-        message_type = message_json["type"]
-
-        if message_type in ["teams", "boxscore"]:
-            store[message_type] = message_json
-            if message_type == "teams":
-                determine_sides(message_json)
-                await q.async_q.put(message_json)
-                await q.async_q.put({"homeKey": HOME})
-                await q.async_q.put({"awayKey": AWAY})
-                logger.info(f"Home is {HOME} and away is {AWAY}")
-            else:
-                await q.async_q.put({"boxscore": message_json})
-        elif message_type == "playbyplay":
-            plays = message_json["actions"]
-            await compute_stats(q)
-        elif message_type == "action":
-            plays.append(message_json)
-            await process_action(message_json, q)
-            await updated_computed(message_json, q)
-        if message_type != "boxscore":
-            pprint(message_json)
-            pass
-        await asyncio.sleep(0.1)
+def process_boxscore(box: dict, q: Queue):
+    pass
 
 
 def listen_to_nls_sync(q: Queue):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    addr = ("10.250.42.142", 7677)
+    # addr = ("10.250.42.142", 7677)
+    addr = ("192.168.1.161", 7677)
     sock.connect(addr)
     bufsock = BufferedSocket(sock, maxsize=READ_LIMIT, timeout=None)
 
@@ -128,6 +116,7 @@ def listen_to_nls_sync(q: Queue):
             store[message_type] = message_json
             if message_type == "teams":
                 determine_sides(message_json)
+                process_teams(message_json, q)
                 q.sync_q.put(message_json)
                 q.sync_q.put({"homeKey": HOME})
                 q.sync_q.put({"awayKey": AWAY})

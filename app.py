@@ -1,3 +1,4 @@
+import re
 import os
 import sys
 import json
@@ -9,6 +10,7 @@ from aiohttp import web
 from amcp_pylib.core import Client
 from amcp_pylib.module.basic import LOADBG, PLAY, CLEAR
 from amcp_pylib.module.template import CG_ADD
+from amcp_pylib.module.query import CLS
 from distutils.util import strtobool
 
 import producers
@@ -56,8 +58,8 @@ async def invoke(request: web.Request):
     return web.Response(text="OK")
 
 
-caspar = Client()
-caspar.connect()
+# caspar = Client()
+# caspar.connect("10.248.64.194")
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
@@ -107,11 +109,21 @@ async def casparcg(sio, action, item, layer):
     elif action == "QUEUE BLANK":
         caspar.send(LOADBG(channel=1, layer=layer, clip="EMPTY", transition="MIX", duration= 1, auto="AUTO"))
     elif action == "CG ADD":
-        caspar.send(CG_ADD(video_channel=1, cg_layer=layer, template=item, play_on_load=1))
+        caspar.send(CG_ADD(video_channel=1, layer=1, cg_layer=1, template=item, play_on_load=0))
     elif action == "BLANK":
         caspar.send(CLEAR(video_channel=1))
     elif action == "CLEAR":
         caspar.send(CLEAR(video_channel=1, layer=layer))
+
+@sio.on("casparcg-list")
+async def casparcg_list_clips(sio):
+    clips = caspar.send(CLS()).data
+    response = []
+    for clip in clips:
+        response.append({
+            "name": re.findall('"([^"]*)"', clip)[0]
+        })
+    return response
 
 @sio.event
 def connect(sid, environ, _):
@@ -157,8 +169,7 @@ def main():
 
     loop.create_task(consumer(queue))
     loop.create_task(rerun_on_exception(poll_stats, queue))
-    # loop.create_task(listen_to_nls(queue))
-    # loop.create_task(process_control_data(control_queue))
+    loop.run_in_executor(None, listen_to_nls_sync, queue)
 
     logger.info("Initializing producers...")
 

@@ -100,15 +100,15 @@
       </div>
     </div>
 
-    <div x-data class="slider" id="homeInfoSlider">
-      <div class="sliderTitleBoxAlt homeColor" id="slider3Anim2">
-        <img :src="lt.homeImage" class="lthImg">
-        <div class="numPosBox">
-          <strong>{{ lt.homeName }}</strong>
-        </div>
+    <div class="smallSlider" id="homeInfoSlider">
+      <div class="smallSliderContentArea" id="slider5Anim2">
+        {{ homeInfo }}
       </div>
-      <div class="sliderContentArea" id="slider3Anim2">
-        {{ lt.homeInfoSliderText }}
+    </div>
+
+    <div class="smallSlider" id="awayInfoSlider">
+      <div class="smallSliderContentArea" id="slider6Anim2">
+        {{ awayInfo }}
       </div>
     </div>
 

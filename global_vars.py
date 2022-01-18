@@ -1,1 +1,1 @@
-COM_PORT = "COM3"
+COM_PORT = "/dev/tty.usbserial-110"

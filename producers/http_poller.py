@@ -7,7 +7,7 @@ from producers.parse_xml import parse
 from producers.decorator import producer
 from util.store import store
 
-URL = "http://192.155.88.183:8000/9.xml"
+URL = "http://192.155.88.183:8000/11.xml"
 
 
 async def poll_stats(q: Queue):

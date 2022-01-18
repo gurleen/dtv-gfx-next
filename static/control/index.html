@@ -70,6 +70,8 @@
             <toggle-button toggle-key="scoreboard:toggle-text" name="Text Slider"></toggle-button>
             <toggle-button toggle-key="scoreboard:toggle-home" name="Home Slider"></toggle-button>
             <toggle-button toggle-key="scoreboard:toggle-away" name="Away Slider"></toggle-button>
+            <toggle-button toggle-key="scoreboard:toggle-home-info" name="Home Info Slider"></toggle-button>
+            <toggle-button toggle-key="scoreboard:toggle-away-info" name="Away Info Slider"></toggle-button>
         </div>
 
         <div class="box col">
@@ -87,15 +89,15 @@
 
         <div class="box col">
             <select v-model="homePlayer">
-                <option v-for="(player, index) in lt.stats.teams.H" v-bind:value="index">
-                    {{ player.uni }} {{ player.name }}
+                <option v-for="(player, index) in lt.teams[lt.homeKey - 1].players" v-bind:value="player.pno">
+                    {{ player.shirtNumber }} {{ player.familyName }}, {{ player.firstName }}
                 </option>
             </select>
             <button v-on:click="uk('homePlayerNum', homePlayer)">Update Home Player</button>
 
             <select v-model="awayPlayer">
-                <option v-for="(player, index) in lt.stats.teams.V" v-bind:value="index">
-                    {{ player.uni }} {{ player.name }}
+                <option v-for="(player, index) in lt.teams[lt.awayKey - 1].players" v-bind:value="player.pno">
+                    {{ player.shirtNumber }} {{ player.familyName }}, {{ player.firstName }}
                 </option>
             </select>
             <button v-on:click="uk('awayPlayerNum', awayPlayer)">Update Away Player</button>
@@ -134,19 +136,8 @@
         </div>
 
         <div class="box col">
-            <div>
-                <input v-model="casparForm.name" placeholder="Graphic Name">
-                <select v-model="casparForm.type">
-                    <option>Video</option>
-                    <option>Web Page</option>
-                </select>
-                <button v-on:click="addCasparGraphic">Add</button>
-            </div>
-            <div class="col">
-                <template v-for="gfx in casparGraphics">
-                    <caspar-graphic :graphic="gfx"></caspar-graphic>
-                </template>
-            </div>
+            <text-input inp-key="homeInfoSliderText" value=""></text-input>
+            <text-input inp-key="awayInfoSliderText" value=""></text-input>
         </div>
     </div>
 </body>
