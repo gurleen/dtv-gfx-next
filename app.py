@@ -169,7 +169,7 @@ def main():
 
     loop.create_task(consumer(queue))
     loop.create_task(rerun_on_exception(poll_stats, queue))
-    loop.run_in_executor(None, listen_to_nls_sync, queue)
+    # loop.run_in_executor(None, listen_to_nls_sync, queue)
 
     logger.info("Initializing producers...")
 

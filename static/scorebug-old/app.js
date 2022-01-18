@@ -7,7 +7,7 @@ const vue = new Vue({
     },
     computed: {
         compStat: function () {
-            if(this.lt.stats.box === undefined) return {}
+            if(this.lt.stats.boxscore === undefined) return {}
 
             let H = this.lt.boxscore["teams"][this.lt.homeKey - 1]["total"]["team"]
             let V = this.lt.boxscore["teams"][this.lt.awayKey - 1]["total"]["team"]

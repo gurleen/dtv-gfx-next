@@ -55,8 +55,12 @@
         <div :class="lt.homeTO >= 3? 'shownTO': 'hiddenTO'" class="singleTimeout" id="homeTO3"></div>
         <div :class="lt.homeTO >= 4? 'shownTO': 'hiddenTO'" class="singleTimeout" id="homeTO4"></div>
       </div>
-  
+
       <div class="spacer"></div>
+
+      <div class="bonus" v-if="lt.homeBonus">
+        BONUS
+      </div>
   
       <div x-data class="timeouts">
         <div :class="lt.awayTO >= 1? 'shownTO': 'hiddenTO'" class="singleTimeout" id="awayTO1"></div>
@@ -64,16 +68,12 @@
         <div :class="lt.awayTO >= 3? 'shownTO': 'hiddenTO'" class="singleTimeout" id="awayTO3"></div>
         <div :class="lt.awayTO >= 4? 'shownTO': 'hiddenTO'" class="singleTimeout" id="awayTO4"></div>
       </div>
-    </div>
 
-    <!--
-    <div x-data class="slider" id="slider1">
-      <p key="compStatName" class="sliderTitleBox" id="slider1Anim2">
-      </p>
-      <div class="sliderContentArea sliderAnim2" x-html="$sock.compStatText">
+      <div class="bonus" id="awayBonus" v-if="lt.awayBonus">
+        BONUS
       </div>
     </div>
-    -->
+    
 
     <div class="slider compSlider" id="slider1">
       <div class="homeColor compStatValue">{{ compStat.home }}</div>

@@ -56,7 +56,7 @@ Vue.component('caspar-graphic', {
 const vue = new Vue({
     el: ".app",
     data: {
-        lt: {teams: [[], []], homeKey: 0, awayKey: 1, mediaTimeout: false},
+        lt: {teams: [[], []], homeKey: 0, awayKey: 1, mediaTimeout: false, players: [{players: []}, {players: []}], homeKey: 1, awayKey: 2},
         homePlayer: {},
         awayPlayer: {},
         compStat: null,
@@ -72,14 +72,13 @@ const vue = new Vue({
         casparForm: {
             name: "",
             type: ""
-        }
+        },
     },
     async created() {
         this.lt = await (await fetch("/cache")).json()
     },
     mounted() {
         socket.on("state-update", (payload) => {
-            console.log(payload)
             this.lt = { ...this.lt, ...payload }
         })
     },

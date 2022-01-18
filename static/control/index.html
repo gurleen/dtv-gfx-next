@@ -85,18 +85,26 @@
                 <button v-on:click="inc('awayTO', -1)">-1</button>
                 <button v-on:click="inc('awayTO', 1)">+1</button>
             </div>
+            <div>
+                <p>Home Bonus: {{ lt.homeBonus }}</p>
+                <button v-on:click="uk('homeBonus', !lt.homeBonus)">Toggle Home Bonus</button>
+            </div>
+            <div>
+                <p>Away Bonus: {{ lt.awayBonus }}</p>
+                <button v-on:click="uk('awayBonus', !lt.awayBonus)">Toggle Away Bonus</button>
+            </div>
         </div>
 
         <div class="box col">
             <select v-model="homePlayer">
-                <option v-for="(player, index) in lt.teams[lt.homeKey - 1].players" v-bind:value="player.pno">
+                <option v-for="(player, index) in lt.teams[lt.homeKey - 1].players || []" v-bind:value="player.pno">
                     {{ player.shirtNumber }} {{ player.familyName }}, {{ player.firstName }}
                 </option>
             </select>
             <button v-on:click="uk('homePlayerNum', homePlayer)">Update Home Player</button>
 
             <select v-model="awayPlayer">
-                <option v-for="(player, index) in lt.teams[lt.awayKey - 1].players" v-bind:value="player.pno">
+                <option v-for="(player, index) in lt.teams[lt.awayKey - 1].players || []" v-bind:value="player.pno">
                     {{ player.shirtNumber }} {{ player.familyName }}, {{ player.firstName }}
                 </option>
             </select>
