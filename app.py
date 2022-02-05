@@ -132,8 +132,8 @@ def connect(sid, environ, _):
 
 
 @sio.event
-def wrestling(sid, key, value):
-    logger.info(key, value)
+def wrestling(sid, msg):
+    logger.info(msg)
 
 
 async def create_queue() -> Queue:
