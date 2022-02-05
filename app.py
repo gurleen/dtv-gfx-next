@@ -131,6 +131,11 @@ def connect(sid, environ, _):
     logger.info(f"Client at {ip} with sid {sid} connected.")
 
 
+@sio.event
+def wrestling(sid, key, value):
+    logger.info(key, value)
+
+
 async def create_queue() -> Queue:
     return Queue()
 

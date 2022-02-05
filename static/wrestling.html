@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <title>DTV Config</title>
+    <meta charset="UTF-8">
+    <script defer src="https://unpkg.com/alpinejs@3.4.2/dist/cdn.min.js"></script>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+        integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+        crossorigin="anonymous"></script>
+</head>
+
+<script>
+const WIN_TYPES = ["", "DECISON", "MAJOR DECISION", "TECH FALL", "DEFAULT", "FORFEIT", "FALL"]
+const socket = io()
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('main', () => ({
+            homeWrestler: {},
+            awayWrestler: {},
+            homeWin: null,
+            awayWin: null,
+            winTypes: WIN_TYPES,
+            allHome:[{"name":"Eli Anthony","wt":"285lb"},{"name":"Evan Barczak","wt":"165lb"},{"name":"David Colton","wt":"125lb"},{"name":"Aboubakare Diaby","wt":"149lb"},{"name":"Liam Dietrich","wt":"285lb"},{"name":"Jared Donahue","wt":"141/149lb"},{"name":"Daniel Grobman","wt":"125lb"},{"name":"Jack Janda","wt":"174lb"},{"name":"Parker Kropman","wt":"157lb"},{"name":"Natty Lapinski","wt":"174lb"},{"name":"Jaxon Maroney","wt":"133lb"},{"name":"Michael Martinak","wt":"157lb"},{"name":"Bryan McLaughlin","wt":"184lb"},{"name":"Antonio Mininno","wt":"125lb"},{"name":"Santino Morina","wt":"184/197lb"},{"name":"Luke Nichter","wt":"149lb"},{"name":"Tate Nichter","wt":"157/165lb"},{"name":"Mickey O'Malley","wt":"174lb"},{"name":"Sean O'Malley","wt":"197lb"},{"name":"Gabe Onorato","wt":"149lb"},{"name":"Riley Onorato","wt":"174lb"},{"name":"Deon Pleasant","wt":"133lb"},{"name":"Desmond Pleasant","wt":"125lb"},{"name":"Chase Shields","wt":"133lb"},{"name":"Gunner Spain","wt":"165lb"},{"name":"Josh Stillings","wt":"184lb"},{"name":"Joseph Timm","wt":"285lb"},{"name":"Connor Trowbridge","wt":"157lb"},{"name":"Tanner Updegraff","wt":"165lb"},{"name":"Cody Walsh","wt":"165lb"},{"name":"Kyle Waterman","wt":"125lb"},{"name":"Tyler Williams","wt":"141lb"}], 
+            allAway:[{"name":"Dylan Acevedo-Switzer","wt":"125lb"},{"name":"Mario Biancamano","wt":"157lb"},{"name":"Noah Bila","wt":"285lb"},{"name":"Ty Cymmerman","wt":"149lb"},{"name":"Greg Gaxiola","wt":"149lb"},{"name":"Holden Heller","wt":"157lb"},{"name":"Reece Heller","wt":"165lb"},{"name":"Sage Heller","wt":"174lb"},{"name":"Justin  Hoyle","wt":"141lb"},{"name":"Zachary Knighton-Ward","wt":"285lb"},{"name":"Michael Leandrou","wt":"149lb"},{"name":"Ross McFarland","wt":"174lb"},{"name":"Joe McGinty","wt":"157lb"},{"name":"Nikolas Miller","wt":"197lb"},{"name":"Jacob Moon","wt":"125lb"},{"name":"Matt Rogers","wt":"174lb"},{"name":"Trey Rogers","wt":"197lb"},{"name":"Dylan Ryder","wt":"125lb"},{"name":"Eric Shindel","wt":"141lb"},{"name":"Charles Small","wt":"184lb"},{"name":"Ben Somerville","wt":"197lb"},{"name":"Ricky  Stamm","wt":"165lb"},{"name":"Matthew Templeton","wt":"133lb"},{"name":"Ericson Velasquez","wt":"184lb"}],
+            clear() {
+                this.homeWrestler = {}
+                this.awayWrestler = {}
+                this.homeWin = null
+                this.awayWin = null
+            },
+            update() {
+                console.log(this)
+                socket.emit("wrestling", "homeWrestlerName", this.homeWrestler.name)
+                socket.emit("wrestling", "awayWrestlerName", this.awayWrestler.name)
+                socket.emit("wrestling", "homeWin", this.homeWin)
+                socket.emit("wrestling", "awayWin", this.awayWin)
+            }
+        }))
+    })
+</script>
+
+<body x-data="main">
+    <button x-on:click="clear()">CLEAR</button>
+
+    <h2>Select Home Wrestler:</h2>
+    <select x-model="homeWrestler">
+        <template x-for="player in allHome">
+            <option x-text="player.name + ' ' + player.wt"></option>
+        </template>
+    </select>
+
+    <select x-model="homeWin">
+        <option>NONE</option>
+        <template x-for="win in winTypes">
+            <option x-text="win"></option>
+        </template>
+    </select>
+
+    <h2>Select Away Wrestler:</h2>
+    <select x-model="awayWrestler">
+        <template x-for="player in allAway">
+            <option x-text="player.name + ' ' + player.wt"></option>
+        </template>
+    </select>
+
+    <select x-model="awayWin">
+        <option>NONE</option>
+        <template x-for="win in winTypes">
+            <option x-text="win"></option>
+        </template>
+    </select>
+
+    <br>
+    <div style="height: 40px;"></div>
+    <button x-on:click="update()">UPDATE</button>
+</body>
+
+</html>
