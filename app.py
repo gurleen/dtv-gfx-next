@@ -18,6 +18,7 @@ from producers.http_poller import poll_stats
 from producers.livestats import listen_to_nls_sync
 from util.colors import colorscale
 from util.store import store
+from util.file import write_to_file
 
 
 queue: Queue = None
@@ -67,10 +68,17 @@ app.add_routes([web.get("/styles", generate_styles), web.get("/cache", get_full_
 app.router.add_static("/", os.path.join(app_path, "static"), show_index=True)
 
 
+async def run_file_write():
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, write_to_file, store)
+
+
 async def consumer(queue: Queue):
+    loop = asyncio.get_event_loop()
     while True:
         message: dict = await queue.async_q.get()
         store.update(message)
+        loop.create_task(run_file_write())
         await sio.emit("state-update", message)
 
 
@@ -95,10 +103,10 @@ async def control_message(sio, key, value):
     """Handle message from control panel."""
     await control_queue.async_q.put({key: value})
 
-
+"""
 @sio.on("casparcg")
 async def casparcg(sio, action, item, layer):
-    """Handle CasparCG event."""
+    # Handle CasparCG event.
     print("CASPARCG", action, item, layer)
     if action == "LOAD AND PLAY":
         caspar.send(LOADBG(channel=1, layer=layer, clip=item))
@@ -124,6 +132,7 @@ async def casparcg_list_clips(sio):
             "name": re.findall('"([^"]*)"', clip)[0]
         })
     return response
+"""
 
 @sio.event
 def connect(sid, environ, _):
